@@ -63,7 +63,7 @@ firebase.setURL("https://[PROJECT_ID].firebaseio.com/")
 >*In this case you have to pay attention to the timing yourself, because the data needs time to be downloaded.
 ```python
 firebase.get("testtag", "DATAvariable"[, bg=False])
-print(DATAvariable) #None if no data found
+print(firebase.DATAvariable) #None if no data found
 
 firebase.getfile("testtag", "DATAfile.txt"[, bg=False])
 myfile=open("DATAfile.txt")
