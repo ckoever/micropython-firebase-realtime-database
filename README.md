@@ -84,3 +84,5 @@ firebase.delete("testag")
 ## Functionality
 A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time**. So if you make 10 get commands, these are processed **one after the other**, which means that the _last command is executed much later_.
 >*with the exception of get and getfile with bg = False
+
+<meta name="google-site-verification" content="FTs6IR_lrQ_1XqCMMtQI_AUInQqW3qCF3H7TV1QgqUY" />
