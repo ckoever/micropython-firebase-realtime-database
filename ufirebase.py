@@ -61,9 +61,6 @@ class INTERNAL:
       FIREBASE_GLOBAL_VAR.SSOCKET.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n\r\n")
       LOCAL_OUTPUT=ujson.loads(FIREBASE_GLOBAL_VAR.SSOCKET.read().splitlines()[-1])
       INTERNAL.disconnect()
-      globals()["ok"]=1
-      print(globals())
-      globals()["ok"]=1
       globals()[DUMP]=LOCAL_OUTPUT
       
   def getfile(PATH, FILE, bg):
@@ -162,4 +159,3 @@ def delete(PATH):
     
 def addto(PATH, DATA):
     _thread.start_new_thread(INTERNAL.addto, [PATH, ujson.dumps(DATA)])
-
