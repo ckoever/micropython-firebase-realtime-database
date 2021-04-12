@@ -171,13 +171,13 @@ myfile.close()
 ### Upload data to the database
 ```python
 firebase.put("testtag", "testtdata")
-firebase.put("testtag", {"tag1": "data1", "tag2": "data2"}")
+firebase.put("testtag", {"tag1": "data1", "tag2": "data2"})
 
 firebase.addto("testtag", "data1")
 ```
 ### Delete data from the database
 ```python
-firebase.delete("testag")
+firebase.delete("testtag")
 ```
 ## Functionality
 A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. 
