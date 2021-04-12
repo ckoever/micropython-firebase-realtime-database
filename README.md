@@ -181,7 +181,11 @@ firebase.addto("testtag", "data1"[, bg=True, id=0])
 firebase.delete("testag"[, bg=True, id=0])
 ```
 ## Functionality
-A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. So if you make 4 get commands, these are processed **one after the other**, which means that the _last command is executed much later_ or if you make 4 get commands, half id=0, half id=1, these are processed **2*one after the other**, which means that the _last command is executed a bit earlier_ .
+A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. 
+
+If you make 4 get commands, id=0, these are processed **one after the other**, which means that the last command is executed much later. 
+
+If you make 4 get commands, half id=0, half id=1, these are processed **2*one after the other**, which means that the last command is executed a bit earlier.
 >*exception if bg = False
 
 <meta name="google-site-verification" content="FTs6IR_lrQ_1XqCMMtQI_AUInQqW3qCF3H7TV1QgqUY" />
