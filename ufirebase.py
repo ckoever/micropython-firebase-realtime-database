@@ -175,9 +175,9 @@ def put(PATH, DATA, bg=True, id=0):
 
 def patch(PATH, DATA, bg=True, id=0):
     if bg:
-      _thread.start_new_thread(INTERNAL.put, [PATH, ujson.dumps(DATA), str(id)])
+      _thread.start_new_thread(INTERNAL.patch, [PATH, ujson.dumps(DATA), str(id)])
     else:
-      INTERNAL.put(PATH, ujson.dumps(DATA), str(id))
+      INTERNAL.patch(PATH, ujson.dumps(DATA), str(id))
 
 def getfile(PATH, FILE, bg=False, id=0):
     if bg:
@@ -193,12 +193,12 @@ def get(PATH, DUMP, bg=False, id=0):
       
 def delete(PATH, bg=True, id=0):
     if bg:
-      _thread.start_new_thread(INTERNAL.put, [PATH, str(id)])
+      _thread.start_new_thread(INTERNAL.delete, [PATH, str(id)])
     else:
-      INTERNAL.put(PATH, str(id))
+      INTERNAL.delete(PATH, str(id))
     
 def addto(PATH, DATA, bg=True, id=0):
     if bg:
-      _thread.start_new_thread(INTERNAL.put, [PATH, ujson.dumps(DATA), str(id)])
+      _thread.start_new_thread(INTERNAL.addto, [PATH, ujson.dumps(DATA), str(id)])
     else:
-      INTERNAL.put(PATH, ujson.dumps(DATA), str(id))
+      INTERNAL.addto(PATH, ujson.dumps(DATA), str(id))
