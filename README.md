@@ -160,24 +160,24 @@ Dict of sokets for background process.
 ## Examples
 ### Get data from the database
 ```python
-firebase.get("testtag", "DATAvariable"[, bg=False, id=0])
+firebase.get("testtag", "DATAvariable")
 print(firebase.DATAvariable) #None if no data found
 
-firebase.getfile("testtag", "DATAfile.txt"[, bg=False, id=0])
+firebase.getfile("testtag", "DATAfile.txt")
 myfile=open("DATAfile.txt")
 print(myfile.read())
 myfile.close()
 ```
 ### Upload data to the database
 ```python
-firebase.put("testtag", "testtdata"[, bg=True, id=0])
-firebase.put("testtag", {"tag1": "data1", "tag2": "data2"}"[, bg=True, id=0])
+firebase.put("testtag", "testtdata")
+firebase.put("testtag", {"tag1": "data1", "tag2": "data2"}")
 
-firebase.addto("testtag", "data1"[, bg=True, id=0])
+firebase.addto("testtag", "data1")
 ```
 ### Delete data from the database
 ```python
-firebase.delete("testag"[, bg=True, id=0])
+firebase.delete("testag")
 ```
 ## Functionality
 A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. 
