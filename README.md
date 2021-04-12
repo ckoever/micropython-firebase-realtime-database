@@ -157,7 +157,7 @@ Additional information needed by usocket as list.
 firebase.FIREBASE_GLOBAL_VAR.SLIST
 ```
 Dict of sokets for background process.
-## Examples
+## Simple examples
 ### Get data from the database
 ```python
 firebase.get("testtag", "DATAvariable")
