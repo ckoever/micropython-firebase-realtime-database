@@ -98,9 +98,9 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
 ```python
 firebase.put(PATH, DATA, bg=True, id=0)
 ```
-Takes the given storage location `PATH` and uploads the given text `DATA` there.
+Takes the given storage location `PATH` and uploads the given value `DATA` there.
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
     - Example: 
     ```python
     firebase.put("testtag1", "1", id=0)
@@ -108,40 +108,39 @@ Takes the given storage location `PATH` and uploads the given text `DATA` there.
     ```
 ### patch
 ```python
-firebase.patch(PATH, DATA, bg=True, id=0)
+firebase.patch(PATH, DATATAG, bg=True, id=0)
 ```
-Takes the given storage location `PATH` and uploads the given text `DATA` there.
+Takes the given storage location `PATH` and patches the given key `DATATAG` there, without touching any other tag in the Database.
+  - Example:
+  ```python
+  firebase.put("teststruct", {"tag1": "val1", "tag2": "val2"})
+  firebase.patch("teststruct", {"tag1": "new1"}) #only tag 1 will be changed
+  ```
+  ![image](https://user-images.githubusercontent.com/77546092/114471016-30e98a00-9bf0-11eb-90ec-baec7f10e03c.png)
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
-    - Example: 
-    ```python
-    firebase.patch("testtag1", "1", id=0)
-    firebase.patch("testtag2", "2", id=1) #runs at the same time
-    ```
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
 ### addto
 ```python
-firebase.addto(PATH, DATA, bg=True, id=0)
+firebase.addto(PATH, DATA, DUMP=None, bg=True, id=0)
 ```
-Takes the given storage location `PATH` and uploads the given text `DATA` there.
+Takes the given storage location `PATH` and adds the given value `DATA` there, the randomly generated tag can be optionally stored in the DUMP variable.
+  - Example:
+  ```python
+  firebase.addto("testsensor", 128)
+  firebase.addto("testsensor", 124)
+  firebase.addto("testsensor", 120, DUMP="tagname")
+  print(firebase.tagname) #returns {'name': '-MY7GTy4pp2LSpQp5775'}
+  ```
+  ![image](https://user-images.githubusercontent.com/77546092/114472221-1fa17d00-9bf2-11eb-804d-21e0ac425a87.png)
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
-    - Example: 
-    ```python
-    firebase.addto("testtag1", "1", id=0)
-    firebase.addto("testtag2", "2", id=1) #runs at the same time
-    ```
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
 ### delete
 ```python
 firebase.addto(PATH, bg=True, id=0)
 ```
 Takes the given storage location `PATH` deletes the data there.
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
-    - Example: 
-    ```python
-    firebase.delete("testtag1", id=0)
-    firebase.delete("testtag1", id=0) #runs at the same time
-    ```
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
 ## Constants
 ### FIREBASE_GLOBAL_VAR.GLOBAL_URL
 ```python
