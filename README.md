@@ -136,7 +136,7 @@ Takes the given storage location `PATH` and adds the given value `DATA` there, t
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
 ### delete
 ```python
-firebase.addto(PATH, bg=True, id=0)
+firebase.delete(PATH, bg=True, id=0)
 ```
 Takes the given storage location `PATH` deletes the data there.
   - Optional run in the background with the keyword `bg`.
