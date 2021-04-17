@@ -7,6 +7,9 @@ GLOB_WLAN=MOD_NETWORK.WLAN(MOD_NETWORK.STA_IF)
 GLOB_WLAN.active(True)
 GLOB_WLAN.connect("YOURSSID", "YOURPASSWD")
 
+while not GLOB_WLAN.isconnected():
+  pass
+
 #firebase example
 import ufirebase as firebase
 firebase.setURL("https://YOURDATABASE")
