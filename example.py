@@ -1,5 +1,6 @@
 import os as MOD_OS
 import network as MOD_NETWORK
+import time as MOD_TIME
 
 #Connect to Wifi
 GLOB_WLAN=MOD_NETWORK.WLAN(MOD_NETWORK.STA_IF)
