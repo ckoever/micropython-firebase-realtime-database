@@ -8,7 +8,7 @@ GLOB_WLAN.connect("YOURSSID", "YOURPASSWD")
 
 #firebase example
 import ufirebase as firebase
-firebase.setURL("https://test-eb8c8-default-rtdb.firebaseio.com")
+firebase.setURL("https://YOURDATABASE")
 
 #Put Tag1
 firebase.put("testtag", "1234", bg=0)
