@@ -24,7 +24,7 @@ print(firebase.var1)
 #Get Tag2
 firebase.get("lolval", "lolwhat", bg=1)
 print("Im Downloading...")
-time.sleep(5) #Do something in this time
+MOD_TIME.sleep(5) #Do something in this time
 print("lolval_1: "+str(firebase.lolwhat["testval"]["somenumbers"])+
   "\nlolval_2: "+str(firebase.lolwhat["testval"]["something"])+
   "\nlolall: "+str(firebase.lolwhat))
