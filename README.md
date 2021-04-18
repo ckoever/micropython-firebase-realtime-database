@@ -60,7 +60,7 @@ firebase.setURL("https://[PROJECT_ID].firebaseio.com/")
 firebase.setURL(URL)
 ```
 Set the current Firebase URL.
-### get
+### get --------------------------------------
 ```python
 firebase.get(PATH, DUMP, bg=False, id=0, cb=None, limit=False)
 ```
@@ -87,7 +87,7 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
     print(firebase.VAR2)
     #returns {'testlarge2': True, 'lol': True, 'testtag2': True, 'testlarge1': True, 'testtag1': True, 'a': True} 
     ```
-### getfile
+### getfile --------------------------------------
 ```python
 firebase.get(PATH, FILE, bg=False, id=0, cb=None, limit=False)
 ```
@@ -105,7 +105,7 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
     firebase.getfile("testlarge2", "FILE2.txt", id=1, bg=1, cb=(herewefile, ("testlarge2", "1", "FILE2.txt"))) #runs at the same time
     ```
   - 🆕 Limit the depth of the data to 1 with `limit` ⚠️ ONLY USE True/False (not 1/0). 
-### put
+### put --------------------------------------
 ```python
 firebase.put(PATH, DATA, bg=True, id=0, cb=None)
 ```
@@ -118,7 +118,7 @@ Takes the given storage location `PATH` and uploads the given value `DATA` there
     firebase.put("testtag1", "1", id=0)
     firebase.put("testtag2", "2", id=1) #runs at the same time
     ```
-### patch
+### patch --------------------------------------
 ```python
 firebase.patch(PATH, DATATAG, bg=True, id=0, cb=None)
 ```
@@ -132,7 +132,7 @@ Takes the given storage location `PATH` and patches the given key `DATATAG` ther
   - Optional run in the background with the keyword `bg`.
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
   - 🆕 Set an callback function after patching the `DATA`. 
-### addto
+### addto --------------------------------------
 ```python
 firebase.addto(PATH, DATA, DUMP=None, bg=True, id=0, cb=None)
 ```
@@ -149,7 +149,7 @@ Takes the given storage location `PATH` and adds the given value `DATA` there, t
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
   - Retuns the tag under which the data was saved.
   - 🆕 Set an callback function after adding the `DATA`. 
-### delete
+### delete --------------------------------------
 ```python
 firebase.delete(PATH, bg=True, id=0, cb=None)
 ```
@@ -163,12 +163,12 @@ Takes the given storage location `PATH` deletes the data there.
 firebase.FIREBASE_GLOBAL_VAR.GLOBAL_URL
 ```
 Returns the current URL as string, do not change directly insted use `firebase.setURL(URL)`
-### FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO
+### FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO --------------------------------------
 ```python
 firebase.FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO
 ```
 Additional information needed by usocket as list.
-### FIREBASE_GLOBAL_VAR.SLIST
+### FIREBASE_GLOBAL_VAR.SLIST --------------------------------------
 ```python
 firebase.FIREBASE_GLOBAL_VAR.SLIST
 ```
@@ -184,14 +184,14 @@ myfile=open("DATAfile.txt")
 print(myfile.read())
 myfile.close()
 ```
-### Upload data to the database
+### Upload data to the database --------------------------------------
 ```python
 firebase.put("testtag", "testtdata")
 firebase.put("testtag", {"tag1": "data1", "tag2": "data2"})
 
 firebase.addto("testtag", "data1")
 ```
-### Delete data from the database
+### Delete data from the database --------------------------------------
 ```python
 firebase.delete("testtag")
 ```
