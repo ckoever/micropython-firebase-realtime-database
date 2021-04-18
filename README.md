@@ -62,7 +62,7 @@ firebase.setURL(URL)
 Set the current Firebase URL.
 ### get
 ```python
-firebase.get(PATH, DUMP, bg=False, id=0, cb=None)
+firebase.get(PATH, DUMP, bg=False, id=0, cb=None, limit=False)
 ```
 Takes the given storage location `PATH`, gets the data from there and stores it as `DUMP`. The data can later be read out by `firebase.[DUMP]`.
   - Optional run in the background with the keyword `bg`.
@@ -75,9 +75,21 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
     firebase.get("testtag1", "VAR1", bg=True, id=0, cb=(hereweare, ("testtag1", "0", "VAR1")))
     firebase.get("testtag2", "VAR2", bg=True, id=1, cb=(hereweare, ("testtag2", "1", "VAR2"))) #runs at the same time
     ```
+  - 🆕 Limit the depth of the data to 1 with `limit` ⚠️ ONLY USE True/False (not 1/0). 
+    - Example:
+
+    ![image](https://user-images.githubusercontent.com/77546092/115153400-f6f80800-a075-11eb-8c50-5814a96309df.png)
+    ```python
+    firebase.get("a", "VAR1")
+    print(firebase.VAR1) 
+    #returns {'testlarge2': 'KJIHGFEDCBA', 'lol': 'ok', 'a': {'-MY_ntFnAhiTYygcraC6': [2, 2], '-MY_novcmzHOyexwij8B': '2', '-MY_nlKoV7jcYbTJMpzT': '2'}, 'testlarge1': 'ABCDEFGHIJK', 'testtag1': 1, 'testtag2': 2}
+    firebase.get("a", "VAR2", limit=True)
+    print(firebase.VAR2)
+    #returns {'testlarge2': True, 'lol': True, 'testtag2': True, 'testlarge1': True, 'testtag1': True, 'a': True} 
+    ```
 ### getfile
 ```python
-firebase.get(PATH, FILE, bg=False, id=0, cb=None)
+firebase.get(PATH, FILE, bg=False, id=0, cb=None, limit=False)
 ```
 Takes the given storage location `PATH`, gets the data from there and stores it as file at the location `FILE`. Recommeded to download larger amounts of data to avoid ram overflow.
   - Optional run in the background with the keyword `bg`.
@@ -89,9 +101,10 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
        LOCAL_FILE=open(str(filename))
        print("\nname: ",str(name)+", id: "+str(id)+", value: "+str(LOCAL_FILE.read()))
        LOCAL_FILE.close()
-    firebase.getfile("testlarge1", "FILE1.txt", id=0, cb=(herewefile, ("testlarge1", "0", "FILE1.txt")))
-    firebase.getfile("testlarge2", "FILE2.txt", id=1, cb=(herewefile, ("testlarge2", "1", "FILE2.txt"))) #runs at the same time
+    firebase.getfile("testlarge1", "FILE1.txt", id=0, bg=1, cb=(herewefile, ("testlarge1", "0", "FILE1.txt")))
+    firebase.getfile("testlarge2", "FILE2.txt", id=1, bg=1, cb=(herewefile, ("testlarge2", "1", "FILE2.txt"))) #runs at the same time
     ```
+  - 🆕 Limit the depth of the data to 1 with `limit` ⚠️ ONLY USE True/False (not 1/0). 
 ### put
 ```python
 firebase.put(PATH, DATA, bg=True, id=0, cb=None)
