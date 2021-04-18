@@ -62,45 +62,44 @@ firebase.setURL(URL)
 Set the current Firebase URL.
 ### get
 ```python
-firebase.get(PATH, DUMP, bg=False, id=0)
+firebase.get(PATH, DUMP, bg=False, id=0, cb=None)
 ```
 Takes the given storage location `PATH`, gets the data from there and stores it as `DUMP`. The data can later be read out by `firebase.[DUMP]`.
   - Optional run in the background with the keyword `bg`.
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
+  - 🆕 Set an callback function after getting the `DATA`. 
     - Example: 
     ```python
-    firebase.get("testtag1", "VAR1", bg=True, id=0)
-    firebase.get("testtag2", "VAR2", bg=True, id=1) #runs at the same time
-    time.sleep(10) #Do some other things, or wait a bit, or use bg=False with id=0
-    print("1:"+firebase.VAR1+" 2:"+firebase.VAR2)
+    def hereweare(name, id, varname):
+      print("\nname: ",str(name)+", id: "+str(id)+", value: "+str(eval("firebase."+varname)))
+    firebase.get("testtag1", "VAR1", bg=True, id=0, cb=(hereweare, ("testtag1", "0", "VAR1")))
+    firebase.get("testtag2", "VAR2", bg=True, id=1, cb=(hereweare, ("testtag2", "1", "VAR2"))) #runs at the same time
     ```
 ### getfile
 ```python
-firebase.get(PATH, FILE, bg=False, id=0)
+firebase.get(PATH, FILE, bg=False, id=0, cb=None)
 ```
 Takes the given storage location `PATH`, gets the data from there and stores it as file at the location `FILE`. Recommeded to download larger amounts of data to avoid ram overflow.
   - Optional run in the background with the keyword `bg`.
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
+  - 🆕 Set an callback function after getting the `DATA`. 
     - Example: 
     ```python
-    firebase.getfile("testlarge1", "FILE1.txt", id=0)
-    firebase.getfile("testlarge2", "FILE2.txt", id=1) #runs at the same time
-    time.sleep(20) #Do some other things, or wait a bit, or use bg=False with id=0
-    LOCAL_FILE1=open("FILE1.txt")
-    LOCAL_FILE2=open("FILE2.txt")
-    print("1:"+LOCAL_FILE1.read()+" 2:"+LOCAL_FILE2.read())
-    LOCAL_FILE1.close()
-    LOCAL_FILE2.close()
-    del LOCAL_FILE1
-    del LOCAL_FILE2
+    def herewefile(name, id, filename):
+       LOCAL_FILE=open(str(filename))
+       print("\nname: ",str(name)+", id: "+str(id)+", value: "+str(LOCAL_FILE.read()))
+       LOCAL_FILE.close()
+    firebase.getfile("testlarge1", "FILE1.txt", id=0, cb=(herewefile, ("testlarge1", "0", "FILE1.txt")))
+    firebase.getfile("testlarge2", "FILE2.txt", id=1, cb=(herewefile, ("testlarge2", "1", "FILE2.txt"))) #runs at the same time
     ```
 ### put
 ```python
-firebase.put(PATH, DATA, bg=True, id=0)
+firebase.put(PATH, DATA, bg=True, id=0, cb=None)
 ```
 Takes the given storage location `PATH` and uploads the given value `DATA` there.
   - Optional run in the background with the keyword `bg`.
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
+  - 🆕 Set an callback function after getting the `DATA`. 
     - Example: 
     ```python
     firebase.put("testtag1", "1", id=0)
@@ -108,7 +107,7 @@ Takes the given storage location `PATH` and uploads the given value `DATA` there
     ```
 ### patch
 ```python
-firebase.patch(PATH, DATATAG, bg=True, id=0)
+firebase.patch(PATH, DATATAG, bg=True, id=0, cb=None)
 ```
 Takes the given storage location `PATH` and patches the given key `DATATAG` there, without touching any other tag in the Database.
   - Example:
@@ -119,9 +118,10 @@ Takes the given storage location `PATH` and patches the given key `DATATAG` ther
   ![image](https://user-images.githubusercontent.com/77546092/114471016-30e98a00-9bf0-11eb-90ec-baec7f10e03c.png)
   - Optional run in the background with the keyword `bg`.
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
+  - 🆕 Set an callback function after patching the `DATA`. 
 ### addto
 ```python
-firebase.addto(PATH, DATA, DUMP=None, bg=True, id=0)
+firebase.addto(PATH, DATA, DUMP=None, bg=True, id=0, cb=None)
 ```
 Takes the given storage location `PATH` and adds the given value `DATA` there, the randomly generated tag can be optionally stored in the DUMP variable.
   - Example:
@@ -129,18 +129,21 @@ Takes the given storage location `PATH` and adds the given value `DATA` there, t
   firebase.addto("testsensor", 128)
   firebase.addto("testsensor", 124)
   firebase.addto("testsensor", 120, DUMP="tagname")
-  print(firebase.tagname) #returns {'name': '-MY7GTy4pp2LSpQp5775'}
+  print(firebase.tagname) #returns '-MY7GTy4pp2LSpQp5775' (example)
   ```
   ![image](https://user-images.githubusercontent.com/77546092/114472221-1fa17d00-9bf2-11eb-804d-21e0ac425a87.png)
   - Optional run in the background with the keyword `bg`.
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
+  - Retuns the tag under which the data was saved.
+  - 🆕 Set an callback function after adding the `DATA`. 
 ### delete
 ```python
-firebase.delete(PATH, bg=True, id=0)
+firebase.delete(PATH, bg=True, id=0, cb=None)
 ```
 Takes the given storage location `PATH` deletes the data there.
   - Optional run in the background with the keyword `bg`.
   - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
+  - 🆕 Set an callback function after deleting the `DATA`. 
 ## Constants
 ### FIREBASE_GLOBAL_VAR.GLOBAL_URL
 ```python
