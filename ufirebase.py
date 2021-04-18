@@ -1,3 +1,4 @@
+
 import ujson
 import usocket
 import ussl
@@ -31,7 +32,7 @@ class INTERNAL:
       FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=None
       FIREBASE_GLOBAL_VAR.SLIST["S"+id]=None
         
-  def put(PATH, DATA, id):
+  def put(PATH, DATA, id, cb):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(2)
@@ -47,9 +48,14 @@ class INTERNAL:
       LOCAL_DUMMY=LOCAL_SS.read()
       del LOCAL_DUMMY
       INTERNAL.disconnect(id)
+      if cb:
+        try:
+          cb[0](*cb[1])
+        except:
+          cb[0](cb[1])
 
 
-  def patch(PATH, DATATAG, id):
+  def patch(PATH, DATATAG, id, cb):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(1)
@@ -62,8 +68,16 @@ class INTERNAL:
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n")
       LOCAL_SS.write(b"Content-Length: "+str(len(DATATAG))+"\r\n\r\n")
       LOCAL_SS.write(DATATAG)
+      LOCAL_DUMMY=LOCAL_SS.read()
+      del LOCAL_DUMMY
+      INTERNAL.disconnect(id)
+      if cb:
+        try:
+          cb[0](*cb[1])
+        except:
+          cb[0](cb[1])
 
-  def get(PATH, DUMP, id):
+  def get(PATH, DUMP, id, cb):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(1)
@@ -77,8 +91,13 @@ class INTERNAL:
       LOCAL_OUTPUT=ujson.loads(LOCAL_SS.read().splitlines()[-1])
       INTERNAL.disconnect(id)
       globals()[DUMP]=LOCAL_OUTPUT
+      if cb:
+        try:
+          cb[0](*cb[1])
+        except:
+          cb[0](cb[1])
       
-  def getfile(PATH, FILE, bg, id):
+  def getfile(PATH, FILE, bg, id, cb):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(1)
@@ -105,11 +124,17 @@ class INTERNAL:
           if LOCAL_LINE==b"":
             break
           LOCAL_FILE.write(LOCAL_LINE)
-
       LOCAL_FILE.close()
+      LOCAL_DUMMY=LOCAL_SS.read()
+      del LOCAL_DUMMY
       INTERNAL.disconnect(id)
+      if cb:
+        try:
+          cb[0](*cb[1])
+        except:
+          cb[0](cb[1])
 
-  def delete(PATH, id):
+  def delete(PATH, id, cb):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(1)
@@ -123,8 +148,13 @@ class INTERNAL:
       LOCAL_DUMMY=LOCAL_SS.read()
       del LOCAL_DUMMY
       INTERNAL.disconnect(id)
+      if cb:
+        try:
+          cb[0](*cb[1])
+        except:
+          cb[0](cb[1])
       
-  def addto(PATH, DATA, DUMP, id):
+  def addto(PATH, DATA, DUMP, id, cb):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(1)
@@ -140,7 +170,12 @@ class INTERNAL:
       LOCAL_OUTPUT=ujson.loads(LOCAL_SS.read().splitlines()[-1])
       INTERNAL.disconnect(id)
       if DUMP:
-        globals()[DUMP]=LOCAL_OUTPUT
+        globals()[DUMP]=LOCAL_OUTPUT["name"]
+      if cb:
+        try:
+          cb[0](*cb[1])
+        except:
+          cb[0](cb[1])
     
 def setURL(url):
     FIREBASE_GLOBAL_VAR.GLOBAL_URL=url
@@ -163,40 +198,38 @@ def setURL(url):
         
     FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO={"proto": proto, "host": host, "port": port}
 
-def put(PATH, DATA, bg=True, id=0):
+def put(PATH, DATA, bg=True, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.put, [PATH, ujson.dumps(DATA), str(id)])
+      _thread.start_new_thread(INTERNAL.put, [PATH, ujson.dumps(DATA), str(id), cb])
     else:
-      INTERNAL.put(PATH, ujson.dumps(DATA), str(id))
+      INTERNAL.put(PATH, ujson.dumps(DATA), str(id), cb)
 
-def patch(PATH, DATATAG, bg=True, id=0):
+def patch(PATH, DATATAG, bg=True, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.patch, [PATH, ujson.dumps(DATATAG), str(id)])
+      _thread.start_new_thread(INTERNAL.patch, [PATH, ujson.dumps(DATATAG), str(id), cb])
     else:
-      INTERNAL.patch(PATH, ujson.dumps(DATATAG), str(id))
+      INTERNAL.patch(PATH, ujson.dumps(DATATAG), str(id), cb)
 
-def getfile(PATH, FILE, bg=False, id=0):
+def getfile(PATH, FILE, bg=False, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.getfile, [PATH, FILE, bg, str(id)])
+      _thread.start_new_thread(INTERNAL.getfile, [PATH, FILE, bg, str(id), cb])
     else:
-      INTERNAL.getfile(PATH, FILE, bg, str(id))
+      INTERNAL.getfile(PATH, FILE, bg, str(id), cb)
 
-def get(PATH, DUMP, bg=False, id=0):
+def get(PATH, DUMP, bg=False, cb=None, id=0):
     if bg:
-      _thread.start_new_thread(INTERNAL.get, [PATH, DUMP, str(id)])
+      _thread.start_new_thread(INTERNAL.get, [PATH, DUMP, str(id), cb])
     else:
-      INTERNAL.get(PATH, DUMP, str(id))
+      INTERNAL.get(PATH, DUMP, str(id), cb)
       
-def delete(PATH, bg=True, id=0):
+def delete(PATH, bg=True, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.delete, [PATH, str(id)])
+      _thread.start_new_thread(INTERNAL.delete, [PATH, str(id), cb])
     else:
-      INTERNAL.delete(PATH, str(id))
+      INTERNAL.delete(PATH, str(id), cb)
     
-def addto(PATH, DATA, DUMP=None, bg=True, id=0):
+def addto(PATH, DATA, DUMP=None, bg=True, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.addto, [PATH, ujson.dumps(DATA), DUMP, str(id)])
+      _thread.start_new_thread(INTERNAL.addto, [PATH, ujson.dumps(DATA), DUMP, str(id), cb])
     else:
-      INTERNAL.addto(PATH, ujson.dumps(DATA), DUMP, str(id))
-
-
+      INTERNAL.addto(PATH, ujson.dumps(DATA), DUMP, str(id), cb)
