@@ -1,4 +1,3 @@
-
 import ujson
 import usocket
 import ussl
@@ -52,7 +51,10 @@ class INTERNAL:
         try:
           cb[0](*cb[1])
         except:
-          cb[0](cb[1])
+          try:
+            cb[0](cb[1])
+          except:
+            raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")  
 
 
   def patch(PATH, DATATAG, id, cb):
@@ -75,7 +77,10 @@ class INTERNAL:
         try:
           cb[0](*cb[1])
         except:
-          cb[0](cb[1])
+          try:
+            cb[0](cb[1])
+          except:
+            raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")  
 
   def get(PATH, DUMP, id, cb):
       try:
@@ -95,8 +100,10 @@ class INTERNAL:
         try:
           cb[0](*cb[1])
         except:
-          cb[0](cb[1])
-      
+          try:
+            cb[0](cb[1])
+          except:
+            raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")      
   def getfile(PATH, FILE, bg, id, cb):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
@@ -132,7 +139,10 @@ class INTERNAL:
         try:
           cb[0](*cb[1])
         except:
-          cb[0](cb[1])
+          try:
+            cb[0](cb[1])
+          except:
+            raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")  
 
   def delete(PATH, id, cb):
       try:
@@ -152,7 +162,10 @@ class INTERNAL:
         try:
           cb[0](*cb[1])
         except:
-          cb[0](cb[1])
+          try:
+            cb[0](cb[1])
+          except:
+            raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")  
       
   def addto(PATH, DATA, DUMP, id, cb):
       try:
@@ -175,7 +188,10 @@ class INTERNAL:
         try:
           cb[0](*cb[1])
         except:
-          cb[0](cb[1])
+          try:
+            cb[0](cb[1])
+          except:
+            raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")  
     
 def setURL(url):
     FIREBASE_GLOBAL_VAR.GLOBAL_URL=url
