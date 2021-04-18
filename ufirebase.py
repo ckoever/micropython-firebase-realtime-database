@@ -82,7 +82,7 @@ class INTERNAL:
           except:
             raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")  
 
-  def get(PATH, DUMP, id, cb):
+  def get(PATH, DUMP, id, cb, limit):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(1)
@@ -91,7 +91,7 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"GET /"+PATH+b".json HTTP/1.0\r\n")
+      LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+ujson.dumps(limit)+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n\r\n")
       LOCAL_OUTPUT=ujson.loads(LOCAL_SS.read().splitlines()[-1])
       INTERNAL.disconnect(id)
@@ -104,7 +104,7 @@ class INTERNAL:
             cb[0](cb[1])
           except:
             raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")      
-  def getfile(PATH, FILE, bg, id, cb):
+  def getfile(PATH, FILE, bg, id, cb, limit):
       try:
         while FIREBASE_GLOBAL_VAR.SLIST["SS"+id]:
           time.sleep(1)
@@ -113,7 +113,7 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"GET /"+PATH+b".json HTTP/1.0\r\n")
+      LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+ujson.dumps(limit)+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n\r\n")
       while not LOCAL_SS.readline()==b"\r\n":
         pass
@@ -226,17 +226,17 @@ def patch(PATH, DATATAG, bg=True, id=0, cb=None):
     else:
       INTERNAL.patch(PATH, ujson.dumps(DATATAG), str(id), cb)
 
-def getfile(PATH, FILE, bg=False, id=0, cb=None):
+def getfile(PATH, FILE, bg=False, id=0, cb=None, limit=False):
     if bg:
-      _thread.start_new_thread(INTERNAL.getfile, [PATH, FILE, bg, str(id), cb])
+      _thread.start_new_thread(INTERNAL.getfile, [PATH, FILE, bg, str(id), cb, limit])
     else:
-      INTERNAL.getfile(PATH, FILE, bg, str(id), cb)
+      INTERNAL.getfile(PATH, FILE, bg, str(id), cb, limit)
 
-def get(PATH, DUMP, bg=False, cb=None, id=0):
+def get(PATH, DUMP, bg=False, cb=None, id=0, limit=False):
     if bg:
-      _thread.start_new_thread(INTERNAL.get, [PATH, DUMP, str(id), cb])
+      _thread.start_new_thread(INTERNAL.get, [PATH, DUMP, str(id), cb, limit])
     else:
-      INTERNAL.get(PATH, DUMP, str(id), cb)
+      INTERNAL.get(PATH, DUMP, str(id), cb, limit)
       
 def delete(PATH, bg=True, id=0, cb=None):
     if bg:
