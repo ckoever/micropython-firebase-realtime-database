@@ -5,14 +5,14 @@ import time as MOD_TIME
 #Connect to Wifi
 GLOB_WLAN=MOD_NETWORK.WLAN(MOD_NETWORK.STA_IF)
 GLOB_WLAN.active(True)
-GLOB_WLAN.connect("SSID", "PASSWD")
+GLOB_WLAN.connect("[SSID]", "[PASSWD]")
 
 while not GLOB_WLAN.isconnected():
   pass
 
 #firebase example
 import ufirebase as firebase
-firebase.setURL("https://DATABASE.firebaseio.com/")
+firebase.setURL("https://[PROJECT_ID].firebaseio.com/")
 
 #Put Tag1
 firebase.put("testtag", "1234", bg=0)
