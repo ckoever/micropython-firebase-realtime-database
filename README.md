@@ -18,7 +18,7 @@
 ujson, usocket, ussl, _thread, time
 ```
 
-### Preparations [YouTube](https://www.youtube.com/watch?v=T35U8zwTe40&t=14s)
+### Preparations [YouTube Tutorial](https://www.youtube.com/watch?v=T35U8zwTe40&t=14s)
 1. Create a [Firebase Realtime Database](https://firebase.google.com/products/realtime-database). (Console>Add Project>Realtime Database>Create Database)
 
 In the end it should look something like this:
