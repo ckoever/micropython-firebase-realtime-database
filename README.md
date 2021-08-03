@@ -25,7 +25,7 @@ In the end it should look something like this:
 
 ![image](https://user-images.githubusercontent.com/77546092/114287154-f6071b00-9a64-11eb-9214-de75753a71c3.png)
 
-2. Set rules to **public** * *(from now the data can be read and changed by anyone ⚠️)* *
+2. Set rules to **public** * *(from now the data can be read and changed by everyone ⚠️)* *
 ```java
 {
   "rules": {
@@ -66,16 +66,16 @@ firebase.get(PATH, DUMP, bg=False, id=0, cb=None, limit=False)
 ```
 Takes the given storage location `PATH`, gets the data from there and stores it as `DUMP`. The data can later be read out by `firebase.[DUMP]`.
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
-  - 🆕 Set an callback function after getting the `DATA`. 
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Make sure the command runs in the background.
+  - Set an callback function after getting the `DATA`. 
     - Example: 
     ```python
     def hereweare(name, id, varname):
-      print("\nname: ",str(name)+", id: "+str(id)+", value: "+str(eval("firebase."+varname)))
+      print("\nname: "+str(name)+", id: "+str(id)+", value: "+str(eval("firebase."+varname)))
     firebase.get("testtag1", "VAR1", bg=True, id=0, cb=(hereweare, ("testtag1", "0", "VAR1")))
     firebase.get("testtag2", "VAR2", bg=True, id=1, cb=(hereweare, ("testtag2", "1", "VAR2"))) #runs at the same time
     ```
-  - 🆕 Limit the depth of the data to 1 with `limit` ⚠️ ONLY USE True/False (not 1/0). 
+  - Limit the depth of the data to 1 with `limit` ⚠️ ONLY USE True/False (not 1/0). 
     - Example:
 
     ![image](https://user-images.githubusercontent.com/77546092/115153400-f6f80800-a075-11eb-8c50-5814a96309df.png)
@@ -89,12 +89,12 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
     ```
 ### getfile --------------------------------------
 ```python
-firebase.get(PATH, FILE, bg=False, id=0, cb=None, limit=False)
+firebase.getfile(PATH, FILE, bg=False, id=0, cb=None, limit=False)
 ```
 Takes the given storage location `PATH`, gets the data from there and stores it as file at the location `FILE`. Recommeded to download larger amounts of data to avoid ram overflow.
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background.
-  - 🆕 Set an callback function after getting the `DATA`. 
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Make sure the command runs in the background.
+  - Set an callback function after getting the `DATA`. 
     - Example: 
     ```python
     def herewefile(name, id, filename):
@@ -104,15 +104,15 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
     firebase.getfile("testlarge1", "FILE1.txt", id=0, bg=1, cb=(herewefile, ("testlarge1", "0", "FILE1.txt")))
     firebase.getfile("testlarge2", "FILE2.txt", id=1, bg=1, cb=(herewefile, ("testlarge2", "1", "FILE2.txt"))) #runs at the same time
     ```
-  - 🆕 Limit the depth of the data to 1 with `limit` ⚠️ ONLY USE True/False (not 1/0). 
+  - Limit the depth of the data to 1 with `limit` ⚠️ ONLY USE True/False (not 1/0). 
 ### put --------------------------------------
 ```python
 firebase.put(PATH, DATA, bg=True, id=0, cb=None)
 ```
 Takes the given storage location `PATH` and uploads the given value `DATA` there.
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
-  - 🆕 Set an callback function after getting the `DATA`. 
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Make sure the command runs in the background. (Example at get)
+  - Set an callback function after getting the `DATA`. 
     - Example: 
     ```python
     firebase.put("testtag1", "1", id=0)
@@ -130,8 +130,8 @@ Takes the given storage location `PATH` and patches the given key `DATATAG` ther
   ```
   ![image](https://user-images.githubusercontent.com/77546092/114471016-30e98a00-9bf0-11eb-90ec-baec7f10e03c.png)
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
-  - 🆕 Set an callback function after patching the `DATA`. 
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Make sure the command runs in the background. (Example at get)
+  - Set an callback function after patching the `DATA`. 
 ### addto --------------------------------------
 ```python
 firebase.addto(PATH, DATA, DUMP=None, bg=True, id=0, cb=None)
@@ -146,17 +146,17 @@ Takes the given storage location `PATH` and adds the given value `DATA` there, t
   ```
   ![image](https://user-images.githubusercontent.com/77546092/114472221-1fa17d00-9bf2-11eb-804d-21e0ac425a87.png)
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Make sure the command runs in the background. (Example at get)
   - Retuns the tag under which the data was saved.
-  - 🆕 Set an callback function after adding the `DATA`. 
+  - Set an callback function after adding the `DATA`. 
 ### delete --------------------------------------
 ```python
 firebase.delete(PATH, bg=True, id=0, cb=None)
 ```
 Takes the given storage location `PATH` deletes the data there.
   - Optional run in the background with the keyword `bg`.
-  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Recommended if you know what you are doing, only makes sense if the command is running in the background. (Example at get)
-  - 🆕 Set an callback function after deleting the `DATA`. 
+  - Set socket id with the keyword `id`. This makes it possible to establish multiple connections to the server instead of just one. Make sure the command runs in the background. (Example at get)
+  - Set an callback function after deleting the `DATA`. 
 ## Constants
 ### FIREBASE_GLOBAL_VAR.GLOBAL_URL
 ```python
