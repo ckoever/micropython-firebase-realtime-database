@@ -99,7 +99,7 @@ Takes the given storage location `PATH`, gets the data from there and stores it 
     ```python
     def herewefile(name, id, filename):
        LOCAL_FILE=open(str(filename))
-       print("\nname: ",str(name)+", id: "+str(id)+", value: "+str(LOCAL_FILE.read()))
+       print("\nname: "+str(name)+", id: "+str(id)+", value: "+str(LOCAL_FILE.read()))
        LOCAL_FILE.close()
     firebase.getfile("testlarge1", "FILE1.txt", id=0, bg=1, cb=(herewefile, ("testlarge1", "0", "FILE1.txt")))
     firebase.getfile("testlarge2", "FILE2.txt", id=1, bg=1, cb=(herewefile, ("testlarge2", "1", "FILE2.txt"))) #runs at the same time
