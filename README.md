@@ -1,6 +1,7 @@
 # [micropython-firebase-realtime-database](https://github.com/ckoever/micropython-firebase-realtime-database)
 **Firebase implementation** based on [REST API](https://firebase.google.com/docs/reference/rest/database) optimized for the [ESP32 version of Micropython](https://github.com/micropython/micropython-esp32) based on [firebase-micropython-esp32](https://github.com/vishal-android-freak/firebase-micropython-esp32) from vishal-android-freak. It shouldn't be a problem to run it on other Micropython platforms. **A board with SPIRAM is recommended.**
-![status](https://img.shields.io/badge/%20status-%F0%9F%9F%A1Further%20development%20on%20request-yellow)
+
+![status](https://img.shields.io/badge/%20status-%F0%9F%9F%A1%20Further%20development%20on%20request-yellow)
 
 
 ### Commands that are implemented
