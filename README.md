@@ -57,7 +57,7 @@ import ufirebase as firebase
 firebase.setURL("https://[PROJECT_ID].firebaseio.com/")
 ```
 ## Functions
-### setURL
+### setURL --- do this first!
 ```python
 firebase.setURL(URL)
 ```
