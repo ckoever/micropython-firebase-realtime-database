@@ -3,10 +3,16 @@ import usocket
 import ussl
 import _thread
 import time
+import urllib.urequest
 
 class FIREBASE_GLOBAL_VAR:
     GLOBAL_URL=None
     GLOBAL_URL_ADINFO=None
+    GLOBAL_API_KEY=None
+    GLOBAL_USER=None
+    GLOBAL_PASS=None
+    GLOBAL_AUTH=None
+    GLOBAL_AUTH_ACQUIRE=None
     SLIST={}
 
 class INTERNAL:
@@ -18,7 +24,7 @@ class INTERNAL:
           try:
             FIREBASE_GLOBAL_VAR.SLIST["SS"+id] = ussl.wrap_socket(FIREBASE_GLOBAL_VAR.SLIST["S"+id], server_hostname=FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"])
           except:
-            print("ENOMEM, try to restart. Do not make to many id's (sokets) simultaneously! (or use a board with more ram)")
+            print("ENOMEM, try to restart. Do not make to many id's (sockets) simultaneously! (or use a board with more ram)")
             FIREBASE_GLOBAL_VAR.SLIST["S"+id].close()
             FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=None
             FIREBASE_GLOBAL_VAR.SLIST["S"+id]=None
@@ -40,7 +46,11 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"PUT /"+PATH+b".json HTTP/1.0\r\n")
+      refreshToken()
+      if not FIREBASE_GLOBAL_VAR.GLOBAL_AUTH is None:
+          LOCAL_SS.write(b"PUT /"+PATH+b".json?auth="+FIREBASE_GLOBAL_VAR.GLOBAL_AUTH['idToken']+b" HTTP/1.0\r\n")
+      else:
+          LOCAL_SS.write(b"PUT /"+PATH+b".json HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n")
       LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
       LOCAL_SS.write(DATA)
@@ -66,7 +76,11 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"PATCH /"+PATH+b".json HTTP/1.0\r\n")
+      refreshToken()
+      if not FIREBASE_GLOBAL_VAR.GLOBAL_AUTH is None:
+          LOCAL_SS.write(b"PATCH /"+PATH+b".json?auth="+FIREBASE_GLOBAL_VAR.GLOBAL_AUTH['idToken']+b" HTTP/1.0\r\n")
+      else:
+          LOCAL_SS.write(b"PATCH /"+PATH+b".json HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n")
       LOCAL_SS.write(b"Content-Length: "+str(len(DATATAG))+"\r\n\r\n")
       LOCAL_SS.write(DATATAG)
@@ -91,7 +105,11 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+ujson.dumps(limit)+b" HTTP/1.0\r\n")
+      refreshToken()
+      if not FIREBASE_GLOBAL_VAR.GLOBAL_AUTH is None:
+          LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+str(limit)+"&auth="+FIREBASE_GLOBAL_VAR.GLOBAL_AUTH['idToken']+b" HTTP/1.0\r\n")
+      else:
+          LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+str(limit)+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n\r\n")
       LOCAL_OUTPUT=ujson.loads(LOCAL_SS.read().splitlines()[-1])
       INTERNAL.disconnect(id)
@@ -113,7 +131,11 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+ujson.dumps(limit)+b" HTTP/1.0\r\n")
+      refreshToken()
+      if not FIREBASE_GLOBAL_VAR.GLOBAL_AUTH is None:
+          LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+str(limit)+"&auth="+FIREBASE_GLOBAL_VAR.GLOBAL_AUTH['idToken']+b" HTTP/1.0\r\n")
+      else:
+          LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+str(limit)+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n\r\n")
       while not LOCAL_SS.readline()==b"\r\n":
         pass
@@ -153,7 +175,11 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"DELETE /"+PATH+b".json HTTP/1.0\r\n")
+      refreshToken()
+      if not FIREBASE_GLOBAL_VAR.GLOBAL_AUTH is None:
+          LOCAL_SS.write(b"DELETE /"+PATH+b".json?auth="+FIREBASE_GLOBAL_VAR.GLOBAL_AUTH['idToken']+b" HTTP/1.0\r\n")
+      else:
+          LOCAL_SS.write(b"DELETE /"+PATH+b".json HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n\r\n")
       LOCAL_DUMMY=LOCAL_SS.read()
       del LOCAL_DUMMY
@@ -176,7 +202,11 @@ class INTERNAL:
         FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=True
       INTERNAL.connect(id)
       LOCAL_SS=FIREBASE_GLOBAL_VAR.SLIST["SS"+id]
-      LOCAL_SS.write(b"POST /"+PATH+b".json HTTP/1.0\r\n")
+      refreshToken()
+      if not FIREBASE_GLOBAL_VAR.GLOBAL_AUTH is None:
+          LOCAL_SS.write(b"POST /"+PATH+b".json?auth="+FIREBASE_GLOBAL_VAR.GLOBAL_AUTH['idToken']+b" HTTP/1.0\r\n")
+      else:
+          LOCAL_SS.write(b"POST /"+PATH+b".json"+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: "+FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"]+b"\r\n")
       LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
       LOCAL_SS.write(DATA)
@@ -213,6 +243,38 @@ def setURL(url):
         port = int(port)
         
     FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO={"proto": proto, "host": host, "port": port}
+
+def emailAuthenticate(API_KEY, identifier, password):
+    FIREBASE_GLOBAL_VAR.GLOBAL_API_KEY = API_KEY
+    FIREBASE_GLOBAL_VAR.GLOBAL_USER = identifier
+    FIREBASE_GLOBAL_VAR.GLOBAL_PASS = password
+    return performEmailAuthenticate()
+
+def performEmailAuthenticate():
+    authenticate_url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + FIREBASE_GLOBAL_VAR.GLOBAL_API_KEY
+    state = False
+    response = None
+    try:
+        response = urequest.urlopen(authenticate_url, data=ujson.dumps({"email":FIREBASE_GLOBAL_VAR.GLOBAL_USER,"password":FIREBASE_GLOBAL_VAR.GLOBAL_PASS,"returnSecureToken":True}),method="POST")
+        FIREBASE_GLOBAL_VAR.GLOBAL_AUTH_ACQUIRE = time.mktime(time.localtime())
+        FIREBASE_GLOBAL_VAR.GLOBAL_AUTH = ujson.loads(response.read())
+        state = True
+    except Exception as e:
+        print(e)
+    finally:
+        if response:
+            response.close()
+    return state
+
+def refreshToken():
+    # use the authenticate endpoint again instead of using the refresh endpoint because google decided that
+    # it's a good idea to return different variable names for the two endpoint
+    
+    # Authentication endpoint returns 'expiresIn'
+    # Refresh token endpoint returns 'expires_in'
+    # Workaround is to keep calling the first auth endpoint, downside is storing the login/password in memory.
+    if not FIREBASE_GLOBAL_VAR.GLOBAL_AUTH is None and ((time.mktime(time.localtime()) - FIREBASE_GLOBAL_VAR.GLOBAL_AUTH_ACQUIRE) > int(FIREBASE_GLOBAL_VAR.GLOBAL_AUTH['expiresIn']) - 600):
+        return performEmailAuthenticate()
 
 def put(PATH, DATA, bg=True, id=0, cb=None):
     if bg:
