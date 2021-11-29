@@ -206,15 +206,16 @@ If you make 4 get commands, half id=0, half id=1, these are processed **2*one af
 >*exception if bg = False
 
 <meta name="google-site-verification" content="FTs6IR_lrQ_1XqCMMtQI_AUInQqW3qCF3H7TV1QgqUY" />
+
 ### Email Authentication --------------------------------------
-Call emailAuthenticate() at any point of time to authenticate and attach auth token to subsequent requests
+Call emailAuthenticate() at any point of time to authenticate and automatically attach auth token to subsequent requests
 ```python
 firebase.emailAuthenticate(API_KEY, EMAILADDRESS, PASSWORD)
 ```
 
-Example authentication using UID, only allow read and write from a single specific user
+Add user
 ![image](https://user-images.githubusercontent.com/8059266/143820492-d7411b2c-e153-4bcd-83aa-917d0cf2ad89.png)
 
-Example rule
+Example rule (using UID, only allow read and write from a single specific user)
 ![image](https://user-images.githubusercontent.com/8059266/143820644-cd0db0e7-d8c4-493a-95a9-471183562896.png)
 
