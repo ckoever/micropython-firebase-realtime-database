@@ -186,17 +186,29 @@ myfile=open("DATAfile.txt")
 print(myfile.read())
 myfile.close()
 ```
-### Upload data to the database --------------------------------------
+### Upload data to the database
 ```python
 firebase.put("testtag", "testtdata")
 firebase.put("testtag", {"tag1": "data1", "tag2": "data2"})
 
 firebase.addto("testtag", "data1")
 ```
-### Delete data from the database --------------------------------------
+### Delete data from the database
 ```python
 firebase.delete("testtag")
 ```
+### Email Authentication
+Call emailAuthenticate() at any point of time to authenticate and automatically attach auth token to subsequent requests
+```python
+firebase.emailAuthenticate(FIREBASE_WEB_API_KEY, EMAIL_ADDRESS, PASSWORD)
+```
+
+Add user
+![image](https://user-images.githubusercontent.com/8059266/143820492-d7411b2c-e153-4bcd-83aa-917d0cf2ad89.png)
+
+Example rule (using UID, only allow read and write from a single specific user)
+![image](https://user-images.githubusercontent.com/8059266/143820644-cd0db0e7-d8c4-493a-95a9-471183562896.png)
+
 ## Functionality
 A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. 
 
@@ -206,16 +218,3 @@ If you make 4 get commands, half id=0, half id=1, these are processed **2*one af
 >*exception if bg = False
 
 <meta name="google-site-verification" content="FTs6IR_lrQ_1XqCMMtQI_AUInQqW3qCF3H7TV1QgqUY" />
-
-### Email Authentication --------------------------------------
-Call emailAuthenticate() at any point of time to authenticate and automatically attach auth token to subsequent requests
-```python
-firebase.emailAuthenticate(API_KEY, EMAILADDRESS, PASSWORD)
-```
-
-Add user
-![image](https://user-images.githubusercontent.com/8059266/143820492-d7411b2c-e153-4bcd-83aa-917d0cf2ad89.png)
-
-Example rule (using UID, only allow read and write from a single specific user)
-![image](https://user-images.githubusercontent.com/8059266/143820644-cd0db0e7-d8c4-493a-95a9-471183562896.png)
-
