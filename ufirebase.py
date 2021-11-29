@@ -3,7 +3,7 @@ import usocket
 import ussl
 import _thread
 import time
-import urllib.urequest
+import urllib.urequest as urequest
 
 class FIREBASE_GLOBAL_VAR:
     GLOBAL_URL=None
