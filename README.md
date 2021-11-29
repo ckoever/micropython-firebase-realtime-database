@@ -6,12 +6,16 @@
 
 ### Commands that are implemented
 ```
+Basic Commands
 - get (equal GET)
 - getfile (equal GET)*
 - put (equal PUT)
 - patch (equal PATCH)
 - addto (equal POST)
 - delete (equal DELETE)
+
+General Authentication
+- add/(de)select/remove
 ```
 > *getfile writes the data to a file to avoid RAM overflow
 
