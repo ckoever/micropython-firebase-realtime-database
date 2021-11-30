@@ -79,7 +79,7 @@ firebase.setAPIKEY(FIREBASE_PROJECT_API_KEY)
 firebase.addAUTH(EMAIL_ADDRESS, PASSWORD)
 ```
 
-6. Select authentication/user to user
+6. Select authentication/user to use
 ```python
 firebase.selAUTH(EMAIL_ADDRESS, PASSWORD)
 ```
