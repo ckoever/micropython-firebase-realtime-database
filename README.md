@@ -31,7 +31,15 @@ In the end it should look something like this:
 
 ![image](https://user-images.githubusercontent.com/77546092/114287154-f6071b00-9a64-11eb-9214-de75753a71c3.png)
 
-2. Set rules to **public** * *(from now the data can be read and changed by everyone ⚠️)* *
+
+2. Note the URL of the database
+```
+https://[PROJECT_ID].firebaseio.com/
+```
+
+### 3. Set rules
+
+**Public:** (data can be read and changed by everyone ⚠️)
 ```java
 {
   "rules": {
@@ -40,10 +48,27 @@ In the end it should look something like this:
   }
 }
 ```
-3. Note the URL of the database
+**Authentication:**
+
+1. Note the WEB-API Key
+![image](https://user-images.githubusercontent.com/77546092/144001024-b594c6f9-4689-424e-813e-405d0aac5eb9.png)
+
+2. Add user
+![image](https://user-images.githubusercontent.com/8059266/143820492-d7411b2c-e153-4bcd-83aa-917d0cf2ad89.png)
+
+3. Edit rules
+https://firebase.google.com/docs/reference/security/database#variables
+
+Example:
+```java
+{
+  "rules": {
+    ".read": "auth.uid == 'Pho[...]'",
+    ".write": "auth.uid == 'Pho[...]'"
+  }
+}
 ```
-https://[PROJECT_ID].firebaseio.com/
-```
+
 ### Connect to Wifi
 ```python
 import os
@@ -207,11 +232,6 @@ Call emailAuthenticate() at any point of time to authenticate and automatically 
 firebase.emailAuthenticate(FIREBASE_WEB_API_KEY, EMAIL_ADDRESS, PASSWORD)
 ```
 
-Add user
-![image](https://user-images.githubusercontent.com/8059266/143820492-d7411b2c-e153-4bcd-83aa-917d0cf2ad89.png)
-
-Example rule (using UID, only allow read and write from a single specific user)
-![image](https://user-images.githubusercontent.com/8059266/143820644-cd0db0e7-d8c4-493a-95a9-471183562896.png)
 
 ## Functionality
 A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. 
