@@ -14,6 +14,13 @@ while not GLOB_WLAN.isconnected():
 import ufirebase as firebase
 firebase.setURL("https://[PROJECT_ID].firebaseio.com/")
 
+
+#rtdb authentication example
+firebase.setAPIKEY(FIREBASE_WEB_API_KEY)
+firebase.addAUTH(EMAIL_ADDRESS, PASSWORD)
+firebase.selAUTH(EMAIL_ADDRESS)
+
+
 #Put Tag1
 firebase.put("testtag", "1234", bg=0)
 
