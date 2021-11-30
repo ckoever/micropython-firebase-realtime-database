@@ -50,7 +50,7 @@ https://[PROJECT_ID].firebaseio.com/
 ```
 **Authentication:**
 
-1. Note the WEB-API Key
+1. Note the Web API Key (from https://console.firebase.google.com/project/YOUR_PROJECT_NAME_HERE/settings/general)
 ![image](https://user-images.githubusercontent.com/77546092/144001024-b594c6f9-4689-424e-813e-405d0aac5eb9.png)
 
 2. Add user
@@ -67,6 +67,31 @@ Example:
     ".write": "auth.uid == 'Pho[...]'"
   }
 }
+```
+
+4. Set Web API key from Step 1
+```python
+firebase.setAPIKEY(FIREBASE_PROJECT_API_KEY)
+```
+
+5. Add authentication/user
+```python
+firebase.addAUTH(EMAIL_ADDRESS, PASSWORD)
+```
+
+6. Select authentication/user to user
+```python
+firebase.selAUTH(EMAIL_ADDRESS, PASSWORD)
+```
+
+Full Sample
+```python
+FIREBASE_PROJECT_API_KEY = "abcd"
+EMAIL_ADDRESS = "test@test.com"
+PASSWORD = "TEST"
+firebase.setAPIKEY(FIREBASE_PROJECT_API_KEY)
+firebase.addAUTH(EMAIL_ADDRESS, PASSWORD)
+firebase.selAUTH(EMAIL_ADDRESS, PASSWORD)
 ```
 
 ### Connect to Wifi
@@ -226,12 +251,6 @@ firebase.addto("testtag", "data1")
 ```python
 firebase.delete("testtag")
 ```
-### Email Authentication
-Call emailAuthenticate() at any point of time to authenticate and automatically attach auth token to subsequent requests
-```python
-firebase.emailAuthenticate(FIREBASE_WEB_API_KEY, EMAIL_ADDRESS, PASSWORD)
-```
-
 
 ## Functionality
 A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. 
