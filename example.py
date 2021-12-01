@@ -60,6 +60,6 @@ def main():
   print("testtag: "+str(firebase.var1))
   print(time.ticks_ms())
   
-firebase.setapikey("AIzaSyD_VvmoLeIvLUYMJz09r0RBBiGCsy8T53o")
+firebase.setapikey("[APIKEY]")
 #Sign in with auth (bg in combination with cb higly recommended but not necessary)
 firebase.auth.sign_in_ep("[EMAIL]", "[PASSWD]", id=0, cb=(main, ()), bg=True)
