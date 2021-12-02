@@ -1,4 +1,5 @@
 
+
 import ujson
 import usocket
 import _thread
@@ -37,23 +38,32 @@ class rtdb:
       _thread.start_new_thread(INTERNAL.rtdb.addto, [PATH, ujson.dumps(DATA), DUMP, str(id), cb])
     else:
       INTERNAL.rtdb.addto(PATH, ujson.dumps(DATA), DUMP, str(id), cb)
-  def seturl(url):
-    try:
-        proto, dummy, host, path = url.split("/", 3)
-    except ValueError:
-        proto, dummy, host = url.split("/", 2)
-        path = ""
-    if proto == "http:":
+  class conf:
+    def seturl(url):
+      try:
+          proto, dummy, host, path = url.split("/", 3)
+      except ValueError:
+          proto, dummy, host = url.split("/", 2)
+          path = ""
+      if proto == "http:":
 
-        port = 80
-    elif proto == "https:":
-        port = 443
-    else:
-        raise ValueError("Unsupported protocol: " + proto)
-    if ":" in host:
-        host, port = host.split(":", 1)
-        port = int(port)
-    VAR.rtdb.url={"proto": proto, "host": host, "port": port}
+          port = 80
+      elif proto == "https:":
+          port = 443
+      else:
+          raise ValueError("Unsupported protocol: " + proto)
+      if ":" in host:
+          host, port = host.split(":", 1)
+          port = int(port)
+      VAR.rtdb.url={"proto": proto, "host": host, "port": port}
+    def setsecret(secret):
+      VAR.rtdb.secret=secret
+      VAR.rtdb.ruleurl=("https://"+VAR.rtdb.url+"/.firebaseio/.settings/rules.json?auth="+secret)
+    def getrules(DUMP, bg=False, id=0, cb=None):
+      if bg:
+        _thread.start_new_thread(INTERNAL.rtdb.getrules, [DUMP, id, cb])
+      else:
+        INTERNAL.rtdb.getrules(DUMP, id, cb)
 class auth:
   def selauth(email):
     if str(email) in VAR.auth.list:
@@ -68,26 +78,65 @@ class auth:
     VAR.auth.list={}
   def sign_in_ep(email, passwd, bg=False, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.auth.add, [email, passwd, str(id), cb])
+      _thread.start_new_thread(INTERNAL.auth.sign_in_ep, [email, passwd, str(id), cb])
     else:
-      INTERNAL.auth.add(email, passwd, str(id), cb)
-  def send_password_reset(email, passwd, DUMP, bg=False, id=0, cb=None):
+      INTERNAL.auth.sign_in_ep(email, passwd, str(id), cb)
+  def send_password_reset_email(DUMP, bg=False, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.auth.send_password_reset,["PASSWORD_RESET", email, passwd, DUMP, str(id), cb])
+      _thread.start_new_thread(INTERNAL.auth.send_password_reset_email,[DUMP, str(id), cb])
     else:
-      INTERNAL.auth.send_password_reset("PASSWORD_RESET", email, passwd, DUMP, str(id), cb)
-  
+      INTERNAL.auth.send_password_reset_email(DUMP, str(id), cb)
+  def sign_up_ep(email, passwd, bg=False, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.auth.sign_up_ep, [email, passwd, str(id), cb])
+    else:
+      INTERNAL.auth.sign_up_ep(email, passwd, str(id), cb)
+  def sign_in_anonym(DUMP, bg=False, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.auth.sign_in_anonym, [DUMP, str(id), cb])
+    else:
+      INTERNAL.auth.sign_in_anonym(DUMP, str(id), cb)
+  def verify_password_reset_code(oobCode, DUMP, bg=False, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.auth.send_password_reset,[oobCode, DUMP, str(id), cb])
+    else:
+      INTERNAL.auth.send_password_reset(oobCode, DUMP, str(id), cb)
+  def confirm_password_reset(oobCode, newpasswd, DUMP, bg=False, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.auth.confirm_password_reset,[oobCode, newpasswd, DUMP, str(id), cb])
+    else:
+      INTERNAL.auth.confirm_password_reset(oobCode, newpasswd, DUMP, str(id), cb)
+  def change_email(newemail, DUMP, bg=False, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.auth.change_email,[newemail, DUMP, str(id), cb])
+    else:
+      INTERNAL.auth.change_email(newemail, DUMP, str(id), cb)
+  def change_password(newpassword, DUMP, bg=False, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.auth.change_email,[newpassword, DUMP, str(id), cb])
+    else:
+      INTERNAL.auth.change_email(newpassword, DUMP, str(id), cb)
+
 class VAR:
   class auth:
     list={}
     surl="identitytoolkit.googleapis.com"
   class rtdb:
     url=None
+    secret=None
+    ruleurl=None
   apikey=None
   socklist={}
   authct=None
   
 class INTERNAL:
+  def checksockav(id):
+    try:
+      while VAR.socklist["SS"+id]:
+        time.sleep(2)
+      VAR.socklist["SS"+id]=True
+    except:
+      VAR.socklist["SS"+id]=True
   def callback(cb):
     try:
       cb[0](*cb[1])
@@ -100,24 +149,19 @@ class INTERNAL:
         VAR.socklist["SS"+id].close()
         VAR.socklist["SS"+id]=None
         VAR.socklist["S"+id]=None
+  def connect(host, port, id):
+    LOCAL_ADINFO=usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)[0]
+    VAR.socklist["S"+id] = usocket.socket(LOCAL_ADINFO[0], LOCAL_ADINFO[1], LOCAL_ADINFO[2])
+    VAR.socklist["S"+id].connect(LOCAL_ADINFO[-1])
+    try:
+      VAR.socklist["SS"+id] = ussl.wrap_socket(VAR.socklist["S"+id], server_hostname=VAR.rtdb.url["host"])
+    except Exception as Exception:
+      INTERNAL.disconnect(id)
+      raise Exception  
   class rtdb:
-    def connect(id):
-      LOCAL_ADINFO=usocket.getaddrinfo(VAR.rtdb.url["host"], VAR.rtdb.url["port"], 0, usocket.SOCK_STREAM)[0]
-      VAR.socklist["S"+id] = usocket.socket(LOCAL_ADINFO[0], LOCAL_ADINFO[1], LOCAL_ADINFO[2])
-      VAR.socklist["S"+id].connect(LOCAL_ADINFO[-1])
-      try:
-        VAR.socklist["SS"+id] = ussl.wrap_socket(VAR.socklist["S"+id], server_hostname=VAR.rtdb.url["host"])
-      except Exception as Exception:
-        INTERNAL.disconnect(id)
-        raise Exception  
     def put(PATH, DATA, DUMP, id, cb):
-        try:
-          while VAR.socklist["SS"+id]:
-            time.sleep(2)
-          VAR.socklist["SS"+id]=True
-        except:
-          VAR.socklist["SS"+id]=True
-        INTERNAL.rtdb.connect(id)
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
         LOCAL_SS=VAR.socklist["SS"+id]
         if VAR.authct:
           INTERNAL.auth.update(VAR.authct)
@@ -137,13 +181,8 @@ class INTERNAL:
         if cb:
           INTERNAL.callback(cb)
     def patch(PATH, DATATAG, DUMP, id, cb):
-        try:
-          while VAR.socklist["SS"+id]:
-            time.sleep(1)
-          VAR.socklist["SS"+id]=True
-        except:
-          VAR.socklist["SS"+id]=True
-        INTERNAL.rtdb.connect(id)
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
         LOCAL_SS=VAR.socklist["SS"+id]
         if VAR.authct:
           INTERNAL.auth.update(VAR.authct)
@@ -163,13 +202,8 @@ class INTERNAL:
         if cb:
           INTERNAL.callback(cb)
     def get(PATH, DUMP, id, cb, limit):
-        try:
-          while VAR.socklist["SS"+id]:
-            time.sleep(1)
-          VAR.socklist["SS"+id]=True
-        except:
-          VAR.socklist["SS"+id]=True
-        INTERNAL.rtdb.connect(id)
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
         LOCAL_SS=VAR.socklist["SS"+id]
         if VAR.authct:
           INTERNAL.auth.update(VAR.authct)
@@ -187,13 +221,8 @@ class INTERNAL:
         if cb:
           INTERNAL.callback(cb)     
     def getfile(PATH, FILE, DUMP, bg, id, cb, limit):
-        try:
-          while VAR.socklist["SS"+id]:
-            time.sleep(1)
-          VAR.socklist["SS"+id]=True
-        except:
-          VAR.socklist["SS"+id]=True
-        INTERNAL.rtdb.connect(id)
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
         LOCAL_SS=VAR.socklist["SS"+id]
 
         if VAR.authct:
@@ -225,13 +254,8 @@ class INTERNAL:
         if cb:
           INTERNAL.callback(cb)
     def delete(PATH, DUMP, id, cb):
-        try:
-          while VAR.socklist["SS"+id]:
-            time.sleep(1)
-          VAR.socklist["SS"+id]=True
-        except:
-          VAR.socklist["SS"+id]=True
-        INTERNAL.rtdb.connect(id)
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
         LOCAL_SS=VAR.socklist["SS"+id]
         if VAR.authct:
           INTERNAL.auth.update(VAR.authct)
@@ -251,13 +275,8 @@ class INTERNAL:
         if cb:
           INTERNAL.callback(cb)
     def addto(PATH, DATA, DUMP, id, cb):
-        try:
-          while VAR.socklist["SS"+id]:
-            time.sleep(1)
-          VAR.socklist["SS"+id]=True
-        except:
-          VAR.socklist["SS"+id]=True
-        INTERNAL.rtdb.connect(id)
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
         LOCAL_SS=VAR.socklist["SS"+id]
 
         if VAR.authct:
@@ -271,26 +290,35 @@ class INTERNAL:
         LOCAL_DATA=LOCAL_SS.read()
         try:
           LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])
+
           globals()[DUMP]=LOCAL_OUTPUT
         except:
           raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
         INTERNAL.disconnect(id)
         if cb:
           INTERNAL.callback(cb)
-  class auth:
-    def connect(id):
-      LOCAL_ADINFO=usocket.getaddrinfo(VAR.auth.surl, 443, 0, usocket.SOCK_STREAM)[0]
-      VAR.socklist["S"+id] = usocket.socket(LOCAL_ADINFO[0], LOCAL_ADINFO[1], LOCAL_ADINFO[2])
-      VAR.socklist["S"+id].connect(LOCAL_ADINFO[-1])
+    def getrules(DUMP, id, cb):
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.rtdb.ruleurl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"GET "+VAR.rtdb.ruleurl+" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: "+VAR.rtdb.url["host"]+b"\r\n")
+      LOCAL_DATA=LOCAL_SS.read()
       try:
-        VAR.socklist["SS"+id] = ussl.wrap_socket(VAR.socklist["S"+id], server_hostname=VAR.auth.surl)
-      except Exception as Exception:
-        INTERNAL.disconnect(id)
-        raise Exception 
-    def add(email, passwd, id, cb):
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])
+        globals()[DUMP]=LOCAL_OUTPUT
+      except:
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      INTERNAL.disconnect(id)
+      if cb:
+        INTERNAL.callback(cb)
+    def setrules():
+      pass
+  class auth:
+    def sign_in_ep(email, passwd, id, cb):
       DATA=ujson.dumps({"email":email,"password":passwd,"returnSecureToken":True})
-      
-      INTERNAL.auth.connect(id)
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
       LOCAL_SS=VAR.socklist["SS"+id]
       LOCAL_SS.write(b"POST /v1/accounts:signInWithPassword?key="+VAR.apikey+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
@@ -311,10 +339,10 @@ class INTERNAL:
     def update(email):
       if ((time.mktime(time.localtime()) - int(VAR.auth.list[str(email)]["time"])) > int(VAR.auth.list[str(email)]['expiresIn']) - 600):
         INTERNAL.auth.add(email, VAR.auth.list[str(email)]["passwd"])
-    def send_password_reset(reqtype, email, passwd, DUMP, id, cb):
-      DATA=ujson.dumps({"requestType":reqtype, "email":email})
-      
-      INTERNAL.auth.connect(id)
+    def send_password_reset_email(DUMP, id, cb):
+      DATA=ujson.dumps({"requestType":"PASSWORD_RESET", "email":VAR.auth.list[VAR.authct]["email"]})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
       LOCAL_SS=VAR.socklist["SS"+id]
       LOCAL_SS.write(b"POST https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key="+VAR.apikey+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
@@ -332,5 +360,134 @@ class INTERNAL:
         raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
       if cb:
         INTERNAL.callback(cb)
+    def sign_up_ep(email, passwd, id, cb):
+      DATA=ujson.dumps({"email":email,"password":passwd,"returnSecureToken":True})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST /v1/accounts:signUp?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      try:
+        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+
+      except Exception as Exception:
+        raise Exception
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      if cb:
+          INTERNAL.callback(cb)
+    def sign_in_anonym(id, cb):
+      DATA=ujson.dumps({"returnSecureToken":True})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST /v1/accounts:signUp?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      try:
+        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+
+      except Exception as Exception:
+        raise Exception
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      if cb:
+          INTERNAL.callback(cb)
+    def verify_password_reset_code(oobCode, DUMP, id, cb):
+      DATA=ujson.dumps({"oobCode":oobCode})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      LOCAL_DATA=LOCAL_SS.read()
+      try:
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])
+        globals()[DUMP]=LOCAL_OUTPUT
+      except:
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      if cb:
+        INTERNAL.callback(cb)
+    
+    def confirm_password_reset(oobCode, newpasswd, DUMP, id, cb):
+      DATA=ujson.dumps({"oobCode":oobCode, "newPassword":newpasswd})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      LOCAL_DATA=LOCAL_SS.read()
+      try:
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])
+        globals()[DUMP]=LOCAL_OUTPUT
+      except:
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      if cb:
+        INTERNAL.callback(cb)
+    def change_email(newemail, DUMP, id, cb):
+      DATA=ujson.dumps({"idToken":VAR.auth.list[VAR.authct]["idToken"],"email":newemail,"returnSecureToken":True})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST /v1/accounts:signInWithPassword?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      try:
+        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+
+      except Exception as Exception:
+        raise Exception
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      if cb:
+          INTERNAL.callback(cb)
+    def change_password(newpassword, DUMP, id, cb):
+      DATA=ujson.dumps({"idToken":VAR.auth.list[VAR.authct]["idToken"],"password":newpassword,"returnSecureToken":True})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST /v1/accounts:signInWithPassword?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      try:
+        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+
+      except Exception as Exception:
+        raise Exception
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      if cb:
+          INTERNAL.callback(cb)
+
 def setapikey(key):
   VAR.apikey=key
+
