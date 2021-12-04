@@ -6,12 +6,16 @@
 
 ### Commands that are implemented
 ```
+Basic Commands
 - get (equal GET)
 - getfile (equal GET)*
 - put (equal PUT)
 - patch (equal PATCH)
 - addto (equal POST)
 - delete (equal DELETE)
+
+General Authentication
+- add/(de)select/remove
 ```
 > *getfile writes the data to a file to avoid RAM overflow
 
@@ -27,7 +31,15 @@ In the end it should look something like this:
 
 ![image](https://user-images.githubusercontent.com/77546092/114287154-f6071b00-9a64-11eb-9214-de75753a71c3.png)
 
-2. Set rules to **public** * *(from now the data can be read and changed by everyone ⚠️)* *
+
+2. Note the URL of the database
+```
+https://[PROJECT_ID].firebaseio.com/
+```
+
+### 3. Set rules
+
+**Public:** (data can be read and changed by everyone ⚠️)
 ```java
 {
   "rules": {
@@ -36,10 +48,52 @@ In the end it should look something like this:
   }
 }
 ```
-3. Note the URL of the database
+**Authentication:**
+
+1. Note the Web API Key (from https://console.firebase.google.com/project/YOUR_PROJECT_NAME_HERE/settings/general)
+![image](https://user-images.githubusercontent.com/77546092/144001024-b594c6f9-4689-424e-813e-405d0aac5eb9.png)
+
+2. Add user
+![image](https://user-images.githubusercontent.com/8059266/143820492-d7411b2c-e153-4bcd-83aa-917d0cf2ad89.png)
+
+3. Edit rules
+https://firebase.google.com/docs/reference/security/database#variables
+
+Example:
+```java
+{
+  "rules": {
+    ".read": "auth.uid == 'Pho[...]'",
+    ".write": "auth.uid == 'Pho[...]'"
+  }
+}
 ```
-https://[PROJECT_ID].firebaseio.com/
+
+4. Set Web API key from Step 1
+```python
+firebase.setAPIKEY(FIREBASE_PROJECT_API_KEY)
 ```
+
+5. Add authentication/user
+```python
+firebase.addAUTH(EMAIL_ADDRESS, PASSWORD)
+```
+
+6. Select authentication/user to use
+```python
+firebase.selAUTH(EMAIL_ADDRESS, PASSWORD)
+```
+
+Full Sample
+```python
+FIREBASE_PROJECT_API_KEY = "abcd"
+EMAIL_ADDRESS = "test@test.com"
+PASSWORD = "TEST"
+firebase.setAPIKEY(FIREBASE_PROJECT_API_KEY)
+firebase.addAUTH(EMAIL_ADDRESS, PASSWORD)
+firebase.selAUTH(EMAIL_ADDRESS, PASSWORD)
+```
+
 ### Connect to Wifi
 ```python
 import os
@@ -186,17 +240,18 @@ myfile=open("DATAfile.txt")
 print(myfile.read())
 myfile.close()
 ```
-### Upload data to the database --------------------------------------
+### Upload data to the database
 ```python
 firebase.put("testtag", "testtdata")
 firebase.put("testtag", {"tag1": "data1", "tag2": "data2"})
 
 firebase.addto("testtag", "data1")
 ```
-### Delete data from the database --------------------------------------
+### Delete data from the database
 ```python
 firebase.delete("testtag")
 ```
+
 ## Functionality
 A thread is created for each command* entered. There is a kind of waiting loop for these commands, so **only one connection can be executed at a time per id**. 
 
