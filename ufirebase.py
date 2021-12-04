@@ -1,11 +1,22 @@
-
-
 import ujson
 import usocket
 import _thread
 import time
 import ussl
 
+DEBUG=1
+
+class VAR:
+  class auth:
+    list={}
+    surl="identitytoolkit.googleapis.com"
+  class rtdb:
+    url=None
+    secret=None
+    ruleurl=None
+  apikey=None
+  socklist={}
+  authct=None
 
 class rtdb:
   def put(PATH, DATA, DUMP=None, bg=True, id=0, cb=None):
@@ -57,13 +68,19 @@ class rtdb:
           port = int(port)
       VAR.rtdb.url={"proto": proto, "host": host, "port": port}
     def setsecret(secret):
-      VAR.rtdb.secret=secret
-      VAR.rtdb.ruleurl=("https://"+VAR.rtdb.url+"/.firebaseio/.settings/rules.json?auth="+secret)
-    def getrules(DUMP, bg=False, id=0, cb=None):
-      if bg:
-        _thread.start_new_thread(INTERNAL.rtdb.getrules, [DUMP, id, cb])
+      if VAR.rtdb.url:
+        VAR.rtdb.secret=secret
+        VAR.rtdb.ruleurl=("https://"+VAR.rtdb.url["host"]+"/.firebaseio/.settings/rules.json?access_token="+secret)
       else:
-        INTERNAL.rtdb.getrules(DUMP, id, cb)
+        raise OSError("Please specify the rtdb url first: firebase.rtdb.conf.seturl(url)")
+    def getrules(DUMP, bg=False, id=0, cb=None):
+      if VAR.rtdb.ruleurl:
+        if bg:
+          _thread.start_new_thread(INTERNAL.rtdb.getrules, [DUMP, str(id), cb])
+        else:
+          INTERNAL.rtdb.getrules(DUMP, str(id), cb)
+      else:
+        raise OSError("Please specify the rtdb secret first: firebase.rtdb.conf.setsecret(secret)")
 class auth:
   def selauth(email):
     if str(email) in VAR.auth.list:
@@ -91,11 +108,11 @@ class auth:
       _thread.start_new_thread(INTERNAL.auth.sign_up_ep, [email, passwd, str(id), cb])
     else:
       INTERNAL.auth.sign_up_ep(email, passwd, str(id), cb)
-  def sign_in_anonym(DUMP, bg=False, id=0, cb=None):
+  def sign_in_anonym(bg=False, id=0, cb=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.auth.sign_in_anonym, [DUMP, str(id), cb])
+      _thread.start_new_thread(INTERNAL.auth.sign_in_anonym, [str(id), cb])
     else:
-      INTERNAL.auth.sign_in_anonym(DUMP, str(id), cb)
+      INTERNAL.auth.sign_in_anonym(str(id), cb)
   def verify_password_reset_code(oobCode, DUMP, bg=False, id=0, cb=None):
     if bg:
       _thread.start_new_thread(INTERNAL.auth.send_password_reset,[oobCode, DUMP, str(id), cb])
@@ -106,28 +123,16 @@ class auth:
       _thread.start_new_thread(INTERNAL.auth.confirm_password_reset,[oobCode, newpasswd, DUMP, str(id), cb])
     else:
       INTERNAL.auth.confirm_password_reset(oobCode, newpasswd, DUMP, str(id), cb)
-  def change_email(newemail, DUMP, bg=False, id=0, cb=None):
+  def change_email(newemail, DUMP=None, bg=False, id=0, cb=None):
     if bg:
       _thread.start_new_thread(INTERNAL.auth.change_email,[newemail, DUMP, str(id), cb])
     else:
       INTERNAL.auth.change_email(newemail, DUMP, str(id), cb)
-  def change_password(newpassword, DUMP, bg=False, id=0, cb=None):
+  def change_password(newpassword, DUMP=None, bg=False, id=0, cb=None):
     if bg:
       _thread.start_new_thread(INTERNAL.auth.change_email,[newpassword, DUMP, str(id), cb])
     else:
       INTERNAL.auth.change_email(newpassword, DUMP, str(id), cb)
-
-class VAR:
-  class auth:
-    list={}
-    surl="identitytoolkit.googleapis.com"
-  class rtdb:
-    url=None
-    secret=None
-    ruleurl=None
-  apikey=None
-  socklist={}
-  authct=None
   
 class INTERNAL:
   def checksockav(id):
@@ -309,13 +314,14 @@ class INTERNAL:
         globals()[DUMP]=LOCAL_OUTPUT
       except:
         raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+
       INTERNAL.disconnect(id)
       if cb:
         INTERNAL.callback(cb)
     def setrules():
       pass
   class auth:
-    def sign_in_ep(email, passwd, id, cb):
+    def sign_in_ep(email, passwd, DUMP, id, cb):
       DATA=ujson.dumps({"email":email,"password":passwd,"returnSecureToken":True})
       INTERNAL.checksockav(id)
       INTERNAL.connect(VAR.auth.surl, 443, id)
@@ -328,12 +334,19 @@ class INTERNAL:
       LOCAL_DATA=LOCAL_SS.read()
       
       INTERNAL.disconnect(id)
+      
+      if DUMP:
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").replace(b" ",b"").splitlines()[-1])
+        globals()[DUMP]=LOCAL_OUTPUT
+      
       try:
         VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
 
-      except Exception as Exception:
-        raise Exception
-        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      except:
+        if DEBUG:
+          raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        else:
+          pass
       if cb:
           INTERNAL.callback(cb)
     def update(email):
@@ -360,8 +373,11 @@ class INTERNAL:
         raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
       if cb:
         INTERNAL.callback(cb)
+
+
     def sign_up_ep(email, passwd, id, cb):
       DATA=ujson.dumps({"email":email,"password":passwd,"returnSecureToken":True})
+
       INTERNAL.checksockav(id)
       INTERNAL.connect(VAR.auth.surl, 443, id)
       LOCAL_SS=VAR.socklist["SS"+id]
@@ -377,7 +393,6 @@ class INTERNAL:
         VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
 
       except Exception as Exception:
-        raise Exception
         raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
       if cb:
           INTERNAL.callback(cb)
@@ -395,7 +410,7 @@ class INTERNAL:
       
       INTERNAL.disconnect(id)
       try:
-        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+        VAR.auth.list["anonym"]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
 
       except Exception as Exception:
         raise Exception
@@ -420,7 +435,10 @@ class INTERNAL:
         LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])
         globals()[DUMP]=LOCAL_OUTPUT
       except:
-        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        if DEBUG:
+          raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        else:
+          pass
       if cb:
         INTERNAL.callback(cb)
     
@@ -438,8 +456,9 @@ class INTERNAL:
       
       INTERNAL.disconnect(id)
       LOCAL_DATA=LOCAL_SS.read()
-      try:
-        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])
+      
+      try DUMP:
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").replace(b" ",b"").splitlines()[-1])
         globals()[DUMP]=LOCAL_OUTPUT
       except:
         raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
@@ -450,7 +469,7 @@ class INTERNAL:
       INTERNAL.checksockav(id)
       INTERNAL.connect(VAR.auth.surl, 443, id)
       LOCAL_SS=VAR.socklist["SS"+id]
-      LOCAL_SS.write(b"POST /v1/accounts:signInWithPassword?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"POST /v1/accounts:update?key="+VAR.apikey+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
       LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
       LOCAL_SS.write(DATA)
@@ -458,12 +477,19 @@ class INTERNAL:
       LOCAL_DATA=LOCAL_SS.read()
       
       INTERNAL.disconnect(id)
+      
+      if DUMP:
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").replace(b" ",b"").splitlines()[-1])
+        globals()[DUMP]=LOCAL_OUTPUT
+      
       try:
-        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+        VAR.auth.list[str(newemail)]={"time": time.mktime(time.localtime()), "passwd": VAR.auth.list[VAR.authct]["passwd"], "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
 
-      except Exception as Exception:
-        raise Exception
-        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      except:
+        if DEBUG:
+          raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        else:
+          pass
       if cb:
           INTERNAL.callback(cb)
     def change_password(newpassword, DUMP, id, cb):
@@ -471,23 +497,32 @@ class INTERNAL:
       INTERNAL.checksockav(id)
       INTERNAL.connect(VAR.auth.surl, 443, id)
       LOCAL_SS=VAR.socklist["SS"+id]
-      LOCAL_SS.write(b"POST /v1/accounts:signInWithPassword?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"POST /v1/accounts:update?key="+VAR.apikey+b" HTTP/1.0\r\n")
       LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
       LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
       LOCAL_SS.write(DATA)
       
+
       LOCAL_DATA=LOCAL_SS.read()
       
       INTERNAL.disconnect(id)
+      
+      if DUMP:
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").replace(b" ",b"").splitlines()[-1])
+        globals()[DUMP]=LOCAL_OUTPUT
+      
       try:
-        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
-
-      except Exception as Exception:
-        raise Exception
-        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        VAR.auth.list[firebase.VAR.authct]={"time": time.mktime(time.localtime()), "passwd": newpasswd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+      except:
+        if DEBUG:
+          raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        else:
+          pass
       if cb:
           INTERNAL.callback(cb)
 
 def setapikey(key):
   VAR.apikey=key
+
+
 
