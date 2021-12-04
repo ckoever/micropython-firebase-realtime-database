@@ -1,0 +1,19 @@
+import ujson
+import usocket
+import _thread
+import time
+import ussl
+
+DEBUG=1
+
+class VAR:
+  class auth:
+    list={}
+    surl="identitytoolkit.googleapis.com"
+  class rtdb:
+    url=None
+    secret=None
+    ruleurl=None
+  apikey=None
+  socklist={}
+  authct=None
