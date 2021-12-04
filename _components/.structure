@@ -1,1 +1,11 @@
-{"minimal": ["basic.part"]}
+{
+"rtdb_put": ["basic.part"],
+"rtdb_patch": ["basic.part"],
+"rtdb_getfile": ["basic.part"],
+"rtdb_get": ["basic.part"],
+"rtdb_delete": ["basic.part"],
+"rtdb_addto": ["basic.part"],
+"rtdb_conf_seturl": ["basic.part"],
+"rtdb_conf_setsecret": ["basic.part"],
+"rtdb_conf_getrules": ["basic.part"],
+}
