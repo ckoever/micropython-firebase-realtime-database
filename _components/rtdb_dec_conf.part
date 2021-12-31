@@ -1,0 +1,31 @@
+  class conf:
+    def seturl(url):
+      try:
+        proto, dummy, host, path = url.split("/", 3)
+      except ValueError:
+        proto, dummy, host = url.split("/", 2)
+        path = ""
+      if proto == "http:":
+        port = 80
+      elif proto == "https:":
+        port = 443
+      else:
+        raise ValueError("Unsupported protocol: " + proto)
+      if ":" in host:
+        host, port = host.split(":", 1)
+        port = int(port)
+      VAR.rtdb.url={"proto": proto, "host": host, "port": port}
+    def setsecret(secret):
+      if VAR.rtdb.url:
+        VAR.rtdb.secret=secret
+        VAR.rtdb.ruleurl=("https://"+VAR.rtdb.url["host"]+"/.firebaseio/.settings/rules.json?access_token="+secret)
+      else:
+        raise OSError("Please specify the rtdb url first: firebase.rtdb.conf.seturl(url)")
+    def getrules(DUMP, bg=False, id=0, cb=None):
+      if VAR.rtdb.ruleurl:
+        if bg:
+          _thread.start_new_thread(INTERNAL.rtdb.getrules, [DUMP, str(id), cb])
+        else:
+          INTERNAL.rtdb.getrules(DUMP, str(id), cb)
+      else:
+        raise OSError("Please specify the rtdb secret first: firebase.rtdb.conf.setsecret(secret)")
