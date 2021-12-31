@@ -1,0 +1,5 @@
+  def get(PATH, DUMP, bg=False, cb=None, id=0, limit=False):
+    if bg:
+      _thread.start_new_thread(INTERNAL.rtdb.get, [PATH, DUMP, str(id), cb, limit])
+    else:
+      INTERNAL.rtdb.get(PATH, DUMP, str(id), cb, limit)
