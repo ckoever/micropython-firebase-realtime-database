@@ -1,0 +1,5 @@
+  def patch(PATH, DATATAG, DUMP=None, bg=True, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.rtdb.patch, [PATH, ujson.dumps(DATATAG), DUMP, str(id), cb])
+    else:
+      INTERNAL.rtdb.patch(PATH, ujson.dumps(DATATAG), DUMP, str(id), cb)
