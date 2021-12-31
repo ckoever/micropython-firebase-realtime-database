@@ -1,0 +1,5 @@
+  def addto(PATH, DATA, DUMP=None, bg=True, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.rtdb.addto, [PATH, ujson.dumps(DATA), DUMP, str(id), cb])
+    else:
+      INTERNAL.rtdb.addto(PATH, ujson.dumps(DATA), DUMP, str(id), cb)
