@@ -1,0 +1,5 @@
+  def delete(PATH, DUMP=None, bg=True, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.rtdb.delete, [PATH, DUMP, str(id), cb])
+    else:
+      INTERNAL.rtdb.delete(PATH, DUMP, str(id), cb)
