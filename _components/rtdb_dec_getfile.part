@@ -1,0 +1,5 @@
+  def getfile(PATH, FILE, DUMP=None, bg=False, id=0, cb=None, limit=False):
+    if bg:
+      _thread.start_new_thread(INTERNAL.getfile, [PATH, FILE, DUMP, bg, str(id), cb, limit])
+    else:
+      INTERNAL.getfile(PATH, FILE, DUMP, bg, str(id), cb, limit)
