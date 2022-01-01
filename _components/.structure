@@ -18,5 +18,5 @@
 },
 
 "auth_basic": ["basic.part"],
-"auth_advanced": ["basic.part"],
+"auth_advanced": ["basic.part"]
 }
