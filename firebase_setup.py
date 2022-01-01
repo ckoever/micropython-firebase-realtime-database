@@ -1,4 +1,6 @@
 
+
+
 import usocket
 import ussl
 import network
@@ -22,7 +24,7 @@ TXT_UNTESTED =\
 TXT_WELCOME =\
 "Welcome to the micropython-firebase automatic setup script.\n\
 This script makes it possible to download individual components of\n\
-micropython-firebase in order to use the memory of micropython boards efficient."
+micropython-firebase in order to use the memory of micropython boards efficiently."
 TXT_WLANCON =\
 "Please connect to the internet."
 TXT_AVPARTS =\
@@ -45,39 +47,66 @@ class setup:
     SSID = str(input("SSID str> "))
     PASSWD = str(input("PASSWORD str> "))
     self.connect_network(SSID, PASSWD)
-    self.open_connection()
+    self.download_parts(self.get_parts())
     
-    print(self.get_parts())
-    
-    self.close_connection()
+  def download_parts(self, parts):
+    file = open("test.py", "wb")
+    for item in parts:
+      print(item+"...")
+      file.write(self.getfile(item))
+    file.close()
+    print("Finished")
     
   def get_parts(self):
     structure = ujson.loads(self.getfile(".structure").replace(b"\n", b""))
     selected = {}
+    global parts
     parts = {}
+    download_list = []
     print(TXT_AVPARTS)
     count = 1
+    sel_number = "1"
+    seek=0
+    
     for part in structure.keys():
-      selected[str(count)] = False
-      print("{E1}. [ ] {E2}".format(E1=count, E2=part))
+      selected[str(count)] = True if (count == 1) else False
       count+=1
     
     print("Enter the number of the component to toggle\nEnter 0 to finish")
-    while True:
-      sel_number = input("NUM/0 int> ")
-      if sel_number in selected and sel_number != 0:
+
+    while sel_number != "0":
+      if (sel_number in selected):
         selected[str(sel_number)] = False if selected[str(sel_number)] else True
         self.list_sel_parts(structure, selected)
-      else:
-        break
+      sel_number = input("n/0 int> ")
     
     count = 1
     for part in structure.keys():
       if selected[str(count)]:
         parts[part] = structure[part]
       count+=1
-      
-    return parts
+    
+    for part in parts.keys():
+      if not (parts[part][0] in download_list):
+        download_list.append(parts[part][0])
+      seek=download_list.index(parts[part][0])+1
+      if not (parts[part][1] in download_list):
+        download_list.insert(seek, parts[part][1])
+      seek=download_list.index(parts[part][1])+1
+      for item in parts[part][2]:
+        if not (item in download_list):
+          download_list.insert(seek, item)
+      if not (parts[part][3] in download_list):
+        download_list.append(parts[part][3])
+      seek=download_list.index(parts[part][3])+1
+      if not (parts[part][4] in download_list):
+        download_list.insert(seek, parts[part][4])
+      seek=download_list.index(parts[part][4])+1
+      for item in parts[part][5]:
+        if not (item in download_list):
+          download_list.insert(seek, item)
+    
+    return download_list
   
   def list_sel_parts(self, structure, selected):
     count = 1
@@ -101,8 +130,13 @@ class setup:
     self.CON.close()
     
   def getfile(self, file):
+    self.open_connection()
     self.CON.write(b"GET /{E1}/{E2}/{E3}/{E4} HTTP/1.0\r\n".format(E1=REPO, E2=BRANCH, E3=PATH, E4=file))
     self.CON.write(b"Host: {E1}\r\n\r\n".format(E1=HOST))
-    return self.CON.read().split(b"\r")[-1]
+    data = self.CON.read().split(b"\r")[-1]
+    self.close_connection()
+    return data
 
 setup()
+
+
