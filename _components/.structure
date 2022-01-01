@@ -2,7 +2,10 @@
 "rtdb_minimal": {
 "dec":{
 1:"rtdb_dec_begin.part",
-2:["rtdb_dec_get.part", "rtdb_dec_put.part", "rtdb_dec_delete.part", "rtdb_dec_conf.part"]}
+2:["rtdb_dec_get.part", "rtdb_dec_put.part", "rtdb_dec_delete.part", "rtdb_dec_conf.part"],
+3:"internal.begin.part",
+5:"rtdb_int_begin.part"
+4:["rtdb_int_get.part", "rtdb_int_put.part", "rtdb_int_delete.part"]}
 },
 
 "rtdb_basic": {
