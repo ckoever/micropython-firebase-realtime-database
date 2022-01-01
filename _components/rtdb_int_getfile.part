@@ -1,0 +1,33 @@
+    def getfile(PATH, FILE, DUMP, bg, id, cb, limit):
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
+        LOCAL_SS=VAR.socklist["SS"+id]
+
+        if VAR.authct:
+          INTERNAL.auth.update(VAR.authct)
+          LOCAL_SS.write(b"GET /"+PATH+b".json?auth="+VAR.auth.list[VAR.authct]["idToken"]+b" HTTP/1.0\r\n")
+        else:
+            LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+str(limit)+b" HTTP/1.0\r\n")
+        LOCAL_SS.write(b"Host: "+VAR.rtdb.url["host"]+b"\r\n\r\n")
+        while not LOCAL_SS.readline()==b"\r\n":
+          pass
+        LOCAL_FILE=open(FILE, "wb")
+        if bg:
+          while True:
+            LOCAL_LINE=LOCAL_SS.read(1024)
+
+            if LOCAL_LINE==b"":
+              break
+            LOCAL_FILE.write(LOCAL_LINE)
+            time.sleep_ms(1)
+        else:
+          while True:
+            LOCAL_LINE=LOCAL_SS.read(1024)
+            if LOCAL_LINE==b"":
+              break
+            LOCAL_FILE.write(LOCAL_LINE)
+        LOCAL_FILE.close()
+        LOCAL_DATA=LOCAL_SS.read()
+        INTERNAL.disconnect(id)
+        if cb:
+          INTERNAL.callback(cb)
