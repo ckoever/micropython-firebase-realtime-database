@@ -17,3 +17,6 @@ class VAR:
   apikey=None
   socklist={}
   authct=None
+
+def setapikey(key):
+  VAR.apikey=key
