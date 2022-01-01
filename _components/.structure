@@ -1,5 +1,6 @@
 {
 "rtdb_minimal": {
+0:"init.part",
 1:"rtdb_dec_begin.part",
 2:["rtdb_dec_get.part", "rtdb_dec_put.part", "rtdb_dec_delete.part", "rtdb_dec_conf.part"],
 3:"internal_begin.part",
@@ -8,6 +9,7 @@
 },
 
 "rtdb_basic": {
+0:"init.part",
 1:"rtdb_dec_begin.part",
 2:["rtdb_dec_get.part", "rtdb_dec_put.part", "rtdb_dec_delete.part", "rtdb_dec_patch.part", "rtdb_dec_conf.part"],
 3:"internal_begin.part",
@@ -16,6 +18,7 @@
 },
 
 "rtdb_advanced": {
+0:"init.part",
 1:"rtdb_dec_begin.part",
 2:["rtdb_dec_get.part", "rtdb_dec_put.part", "rtdb_dec_delete.part", "rtdb_dec_patch.part", "rtdb_dec_conf.part", "rtdb_dec_addto.part", "rtdb_dec_getfile.part"],
 3:"internal_begin.part",
