@@ -1,0 +1,29 @@
+class INTERNAL:
+  def checksockav(id):
+    try:
+      while VAR.socklist["SS"+id]:
+        time.sleep(2)
+      VAR.socklist["SS"+id]=True
+    except:
+      VAR.socklist["SS"+id]=True
+  def callback(cb):
+    try:
+      cb[0](*cb[1])
+    except:
+      try:
+        cb[0](cb[1])
+      except:
+        raise OSError("Callback function could not be executed. Try the function without ufirebase.py callback.")  
+  def disconnect(id):
+    VAR.socklist["SS"+id].close()
+    VAR.socklist["SS"+id]=None
+    VAR.socklist["S"+id]=None
+  def connect(host, port, id):
+    LOCAL_ADINFO=usocket.getaddrinfo(host, port, 0, usocket.SOCK_STREAM)[0]
+    VAR.socklist["S"+id] = usocket.socket(LOCAL_ADINFO[0], LOCAL_ADINFO[1], LOCAL_ADINFO[2])
+    VAR.socklist["S"+id].connect(LOCAL_ADINFO[-1])
+    try:
+      VAR.socklist["SS"+id] = ussl.wrap_socket(VAR.socklist["S"+id], server_hostname=VAR.rtdb.url["host"])
+    except Exception as Exception:
+      INTERNAL.disconnect(id)
+      raise Exception  
