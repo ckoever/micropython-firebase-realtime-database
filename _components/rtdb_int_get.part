@@ -1,0 +1,19 @@
+    def get(PATH, DUMP, id, cb, limit):
+        INTERNAL.checksockav(id)
+        INTERNAL.connect(VAR.rtdb.url["host"], VAR.rtdb.url["port"], id)
+        LOCAL_SS=VAR.socklist["SS"+id]
+        if VAR.authct:
+          INTERNAL.auth.update(VAR.authct)
+          LOCAL_SS.write(b"GET /"+PATH+b".json?auth="+VAR.auth.list[VAR.authct]["idToken"]+b" HTTP/1.0\r\n")
+        else:
+          LOCAL_SS.write(b"GET /"+PATH+b".json?shallow="+str(limit)+b" HTTP/1.0\r\n")
+        LOCAL_SS.write(b"Host: "+VAR.rtdb.url["host"]+b"\r\n\r\n")
+        LOCAL_DATA=LOCAL_SS.read()
+        try:
+          LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])
+          globals()[DUMP]=LOCAL_OUTPUT
+        except:
+          raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        INTERNAL.disconnect(id)
+        if cb:
+          INTERNAL.callback(cb)     
