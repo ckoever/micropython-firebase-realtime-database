@@ -1,0 +1,5 @@
+  def sign_in_anonym(bg=False, id=0, cb=None):
+    if bg:
+      _thread.start_new_thread(INTERNAL.auth.sign_in_anonym, [str(id), cb])
+    else:
+      INTERNAL.auth.sign_in_anonym(str(id), cb)

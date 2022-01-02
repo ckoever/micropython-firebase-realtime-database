@@ -1,0 +1,6 @@
+  def selauth(email):
+    if str(email) in VAR.auth.list:
+      VAR.authct=email
+      return 1
+    else:
+      raise OSError("{email} not signed in. Use auth.signin_ep to enable this feature.".format(email=email))
