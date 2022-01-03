@@ -14,7 +14,7 @@
 2:["rtdb_dec_get.part", "rtdb_dec_put.part", "rtdb_dec_delete.part", "rtdb_dec_patch.part", "rtdb_dec_conf.part"],
 3:"internal_begin.part",
 4:"rtdb_int_begin.part"
-5:["rtdb_int_get.part", "rtdb_int_put.part", "rtdb_int_delete.part", "rtdb_int_patch.begin"]
+5:["rtdb_int_get.part", "rtdb_int_put.part", "rtdb_int_delete.part", "rtdb_int_patch.part"]
 },
 
 "rtdb_advanced": {
@@ -23,7 +23,7 @@
 2:["rtdb_dec_get.part", "rtdb_dec_put.part", "rtdb_dec_delete.part", "rtdb_dec_patch.part", "rtdb_dec_conf.part", "rtdb_dec_addto.part", "rtdb_dec_getfile.part"],
 3:"internal_begin.part",
 4:"rtdb_int_begin.part"
-5:["rtdb_int_get.part", "rtdb_int_put.part", "rtdb_int_delete.part", "rtdb_int_patch.begin", "rtdb_int_addto.part", "rtdb_int_getfile.part"]
+5:["rtdb_int_get.part", "rtdb_int_put.part", "rtdb_int_delete.part", "rtdb_int_patch.part", "rtdb_int_addto.part", "rtdb_int_getfile.part"]
 },
 
 "auth_basic": {
