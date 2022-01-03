@@ -32,7 +32,7 @@
 2:["auth_dec_selauth.part", "auth_dec_desauth.part", "auth_dec_clear.part", "auth_dec_sign_in_ep.part"],
 3:"internal_begin.part",
 4:"auth_int_begin.part"
-5:["auth_int_selauth.part", "auth_int_desauth.part", "auth_int_clear.part", "auth_int_sign_in_ep.part", "auth_int_update.part"]
+5:["auth_int_sign_in_ep.part", "auth_int_update.part"]
 },
 
 "auth_advanced (not recommended)": {
@@ -43,7 +43,7 @@
 "auth_dec_verify_password_reset_code.part", "auth_dec_confirm_password_reset.part", "auth_dec_change_email.part", "auth_dec_change_password.part"],
 3:"internal_begin.part",
 4:"auth_int_begin.part"
-5:["auth_int_update.part", "auth_int_selauth.part", "auth_int_desauth.part", "auth_int_clear.part", "auth_int_sign_in_ep.part",
+5:["auth_int_update.part", "auth_int_sign_in_ep.part",
 "auth_int_send_password_reset_email.part", "auth_int_sign_up_ep.part", "auth_int_sign_in_anonym.part",
 "auth_int_verify_password_reset_code.part", "auth_int_confirm_password_reset.part", "auth_int_change_email.part", "auth_int_change_password.part"]
 },
