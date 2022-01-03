@@ -1,1 +1,3 @@
-  class auth:
+    def update(email):
+      if ((time.mktime(time.localtime()) - int(VAR.auth.list[str(email)]["time"])) > int(VAR.auth.list[str(email)]['expiresIn']) - 600):
+        INTERNAL.auth.add(email, VAR.auth.list[str(email)]["passwd"])
