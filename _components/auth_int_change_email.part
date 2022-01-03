@@ -1,0 +1,28 @@
+    def change_email(newemail, DUMP, id, cb):
+      DATA=ujson.dumps({"idToken":VAR.auth.list[VAR.authct]["idToken"],"email":newemail,"returnSecureToken":True})
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST /v1/accounts:update?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      
+      if DUMP:
+        LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").replace(b" ",b"").splitlines()[-1])
+        globals()[DUMP]=LOCAL_OUTPUT
+      
+      try:
+        VAR.auth.list[str(newemail)]={"time": time.mktime(time.localtime()), "passwd": VAR.auth.list[VAR.authct]["passwd"], "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+
+      except:
+        if DEBUG:
+          raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+        else:
+          pass
+      if cb:
+          INTERNAL.callback(cb)

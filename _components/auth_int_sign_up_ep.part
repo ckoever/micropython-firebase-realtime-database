@@ -1,0 +1,21 @@
+    def sign_up_ep(email, passwd, id, cb):
+      DATA=ujson.dumps({"email":email,"password":passwd,"returnSecureToken":True})
+
+      INTERNAL.checksockav(id)
+      INTERNAL.connect(VAR.auth.surl, 443, id)
+      LOCAL_SS=VAR.socklist["SS"+id]
+      LOCAL_SS.write(b"POST /v1/accounts:signUp?key="+VAR.apikey+b" HTTP/1.0\r\n")
+      LOCAL_SS.write(b"Host: identitytoolkit.googleapis.com\r\n")
+      LOCAL_SS.write(b"Content-Length: "+str(len(DATA))+"\r\n\r\n")
+      LOCAL_SS.write(DATA)
+      
+      LOCAL_DATA=LOCAL_SS.read()
+      
+      INTERNAL.disconnect(id)
+      try:
+        VAR.auth.list[str(email)]={"time": time.mktime(time.localtime()), "passwd": passwd, "idToken": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["idToken"], "expiresIn": ujson.loads(LOCAL_DATA.replace(b"\n", b"").splitlines()[-1])["expiresIn"]}
+
+      except Exception as Exception:
+        raise OSError("parse error:\r\n  {val}".format(val=LOCAL_DATA))
+      if cb:
+          INTERNAL.callback(cb)
