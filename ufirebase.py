@@ -18,7 +18,7 @@ class INTERNAL:
           try:
             FIREBASE_GLOBAL_VAR.SLIST["SS"+id] = ussl.wrap_socket(FIREBASE_GLOBAL_VAR.SLIST["S"+id], server_hostname=FIREBASE_GLOBAL_VAR.GLOBAL_URL_ADINFO["host"])
           except:
-            print("ENOMEM, try to restart. Do not make to many id's (sokets) simultaneously! (or use a board with more ram)")
+            print("ENOMEM, try to restart. If you make to many id's (sokets) simultaneously (bg=1 and id=x), try to use less or use a board with more ram!\nSome emulation software limits the RAM.")
             FIREBASE_GLOBAL_VAR.SLIST["S"+id].close()
             FIREBASE_GLOBAL_VAR.SLIST["SS"+id]=None
             FIREBASE_GLOBAL_VAR.SLIST["S"+id]=None
