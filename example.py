@@ -1,7 +1,3 @@
-
-
-
-
 import machine
 #HIGLY RECOMMENDED
 machine.freq(240000000) #Max clk of the mcu
@@ -12,7 +8,10 @@ import network
 #Connect to Wifi
 GLOB_WLAN=network.WLAN(network.STA_IF)
 GLOB_WLAN.active(True)
-GLOB_WLAN.connect("[SSID]", "[PASSWD]")
+GLOB_WLAN.connect("[YOURSSID]", "[YOURPASSWD]")
+
+while not GLOB_WLAN.isconnected():
+  pass
 
 #firebase example
 import ufirebase as firebase
@@ -26,9 +25,8 @@ def callbackfunc2():
   print(firebase.testtag)
 
 def main():
-  firebase.auth.selauth("[EMAIL]")
-  firebase.rtdb.seturl("https://[RTDB].firebaseio.com/")
-
+  firebase.auth.selauth("[AUTH_EMAIL]")
+  
   #Put Tag1
   firebase.rtdb.put("testtag", "1234", bg=0)
 
@@ -40,7 +38,7 @@ def main():
   print("testtag: "+str(firebase.var1))
 
   #Get Tag2+Tag1 as callback and background thread
-  firebase.rtdb.get("lolval", "lolwhat", bg=1, cb=(callbackfunc, ()))
+  firebase.rtdb.get("lolval", "lolwhat", bg=1, id=0, cb=(callbackfunc, ()))
   firebase.rtdb.get("testtag", "testtag", bg=1, id=1, cb=(callbackfunc2, ()))
   print(end="Im getting lolval now")
 
@@ -54,12 +52,15 @@ def main():
     except:
       pass
       
-
+      
+  #"Logout"
   firebase.auth.desauth()
+  
   firebase.rtdb.get("testtag", "var1", bg=0)
   print("testtag: "+str(firebase.var1))
   print(time.ticks_ms())
   
-firebase.setapikey("[APIKEY]")
+firebase.rtdb.conf.seturl("https://[FB_RTDB].firebaseio.com/")
+firebase.setapikey("[TOKEN]")
 #Sign in with auth (bg in combination with cb higly recommended but not necessary)
-firebase.auth.sign_in_ep("[EMAIL]", "[PASSWD]", id=0, cb=(main, ()), bg=True)
+firebase.auth.sign_in_ep("[AUTH_EMAIL]", "[AUTH_PASSWD]", id=0, cb=(main, ()), bg=True)
