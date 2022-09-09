@@ -457,7 +457,7 @@ class INTERNAL:
       INTERNAL.disconnect(id)
       LOCAL_DATA=LOCAL_SS.read()
       
-      try DUMP:
+      try:
         LOCAL_OUTPUT=ujson.loads(LOCAL_DATA.replace(b"\n", b"").replace(b" ",b"").splitlines()[-1])
         globals()[DUMP]=LOCAL_OUTPUT
       except:
