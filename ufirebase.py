@@ -1,3 +1,4 @@
+
 import ujson
 import usocket
 import _thread
@@ -93,11 +94,11 @@ class auth:
     return 1
   def clear():
     VAR.auth.list={}
-  def sign_in_ep(email, passwd, bg=False, id=0, cb=None):
+  def sign_in_ep(email, passwd, bg=False, id=0, cb=None, DUMP=None):
     if bg:
-      _thread.start_new_thread(INTERNAL.auth.sign_in_ep, [email, passwd, str(id), cb])
+      _thread.start_new_thread(INTERNAL.auth.sign_in_ep, [email, passwd,DUMP, str(id), cb])
     else:
-      INTERNAL.auth.sign_in_ep(email, passwd, str(id), cb)
+      INTERNAL.auth.sign_in_ep(email, passwd, DUMP, str(id), cb)
   def send_password_reset_email(DUMP, bg=False, id=0, cb=None):
     if bg:
       _thread.start_new_thread(INTERNAL.auth.send_password_reset_email,[DUMP, str(id), cb])
@@ -523,6 +524,3 @@ class INTERNAL:
 
 def setapikey(key):
   VAR.apikey=key
-
-
-
