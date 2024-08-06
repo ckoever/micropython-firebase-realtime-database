@@ -3,6 +3,28 @@
 
 ![status](https://img.shields.io/badge/%20status-%F0%9F%9F%A1%20Further%20development%20on%20request-yellow?style=for-the-badge)
 
+### 🔴IMPORTANT❗
+The beta branch adds support for firebase authentication. See [ufirebase.py class auth](https://github.com/ckoever/micropython-firebase-realtime-database/blob/beta/ufirebase.py#L85)
+This is necessary when only specific "users" should be able to read and/or write to or from a specific realtime database path. See [Understand Firebase Realtime Database Security Rules](https://firebase.google.com/docs/database/security?hl=en#section-authentication). If you make your realtime database available for public, you should (i highly recommend it)  use authentication, so that the realtime database url alone, isn't the only GRAND KEY to access all information stored in the database. Use authentication instead.
+
+The reason why i the beta branch with auth is not pushed to main is that documentation is missing/wrong so you need to take a look at the source code yourself to use the functions. 
+examples:
+main branch --> beta branch
+get(...) --> rtdb.get(...)
+seturl(...) --> rtdb.conf.seturl(...)
+[...]
+
+new functions in beta branch
+rtdb.conf.setsecret(...)
+auth.selauth(...)
+auth.desauth(...)
+auth.sign_in_ep(email, passwd, ...)
+auth.send_password_reset_email(...)
+auth.verify_password_reset_code(...)
+[... and more]
+
+as most of the new code in beta branch is created according to [this documentation](https://cloud.google.com/identity-platform/docs/reference/rest/v1/accounts), you can orient yourself on that.
+Please also note that authentication is not completely implemented, so most features are missing.
 
 ### Commands that are implemented
 ```
