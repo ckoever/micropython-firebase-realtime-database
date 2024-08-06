@@ -31,6 +31,9 @@ auth.verify_password_reset_code(...)
 as most of the new code in beta branch is created according to [this documentation](https://cloud.google.com/identity-platform/docs/reference/rest/v1/accounts), you can orient yourself on that.
 Please also note that authentication is not completely implemented, so most features are missing.
 
+ALSO...
+copy the [ufirebase.py](https://github.com/ckoever/micropython-firebase-realtime-database/blob/beta/ufirebase.py) file to your board instead of the automated [firebase_setup.py](https://github.com/ckoever/micropython-firebase-realtime-database/blob/beta/firebase_setup.py) setup script.
+
 ### Commands that are implemented
 ```
 Basic Commands
